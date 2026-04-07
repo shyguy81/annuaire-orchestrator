@@ -1,31 +1,52 @@
 # Orchestrateur — Annuaire de Contacts
 
-## Vue d'ensemble
-
-Ce dossier contient l'orchestrateur Python du projet **annuaire-contacts**.
-Il coordonne les interactions entre les différents composants du système.
+Dossier de **documentation + règles** (pas de code ni orchestration Docker).
 
 ## Architecture du projet
 
 ```
 annuaire-contacts/
-├── orchestrator/        ← ce dossier (modifiable)
-├── backend-fastapi/     ← API REST Python/FastAPI (NON modifiable depuis l'orchestrateur)
-└── mcp-fast-mcp/        ← Serveur MCP (NON modifiable depuis l'orchestrateur)
+├── orchestrator/              ← ce dossier (DOC + RÈGLES)
+│   ├── docs/                  → Toute la documentation
+│   ├── CLAUDE.md              → Ce fichier (règles projet)
+│   └── .claude/rules/         → 5 règles non-négociables
+│
+├── backend-fastapi/           ← Service autonome (port 8000)
+│   ├── docker-compose.yml     → Démarrage: cd backend-fastapi && docker compose up
+│   ├── main.py, models.py
+│   └── Dockerfile
+│
+└── mcp-fast-mcp/              ← Service autonome (port 8001)
+    ├── docker-compose.yml     → Démarrage: cd mcp-fast-mcp && docker compose up
+    ├── main.py, models.py
+    └── Dockerfile
 ```
 
 ## Rôle de l'orchestrateur
 
-- Orchestration des flux entre le backend FastAPI et le serveur MCP
-- Point d'entrée principal pour l'exécution du système
-- Coordination et intégration des services
+✅ **Documentation** (guides, exemples, API specs)  
+✅ **Règles** (5 contraintes non-négociables)  
+✅ **Coordination** logique (pas de docker-compose à la racine)  
 
-## Contraintes importantes
+❌ **PAS** d'orchestration Docker  
+❌ **PAS** de logique métier  
+❌ **PAS** de modification des services techniques
 
-- Le dossier `../backend-fastapi` est **en lecture seule** depuis l'orchestrateur : ne pas modifier son code.
-- Le dossier `../mcp-fast-mcp` est **en lecture seule** depuis l'orchestrateur : ne pas modifier son code.
-- Toute modification fonctionnelle doit passer par les interfaces exposées (API HTTP, protocole MCP).
+## 🚨 Règles Essentielles (5)
 
-## 🚨 Règles Essentielles
+Voir [.claude/rules/annuaire-contacts-rules.md](./.claude/rules/annuaire-contacts-rules.md)
 
-Voir [.claude/rules/annuaire-contacts-rules.md](./.claude/rules/annuaire-contacts-rules.md) pour les 5 règles non-négociables.
+**TL;DR:**
+1. Orchestrator = orchestration + doc uniquement
+2. Ne JAMAIS modifier backend ou MCP depuis ici
+3. Clients générés (pas d'URLs hardcodées)
+4. Commits depuis repos techniques
+5. Docker Compose = source de vérité
+
+## 📚 Documentation
+
+- **[docs/SERVICES.md](./docs/SERVICES.md)** — Démarrage autonome des services
+- **[docs/API.md](./docs/API.md)** — Backend endpoints
+- **[docs/MCP.md](./docs/MCP.md)** — MCP endpoints pour IA
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — Design système
+- **[README.md](./README.md)** — Quick start
