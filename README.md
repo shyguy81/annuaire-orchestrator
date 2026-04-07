@@ -10,15 +10,22 @@ Système de gestion contacts avec API FastAPI + serveur MCP pour intégration IA
 
 ## 🚀 Démarrage (5 min)
 
-```bash
-# Depuis la racine (annuaire-contacts/)
-docker compose up --build
+**Services autonomes (chaque dossier = son docker-compose.yml)**
 
-# Accès
+```bash
+# Terminal 1: Backend
+cd backend-fastapi && docker compose up --build
+
+# Terminal 2: MCP (une fois backend prêt)
+cd mcp-fast-mcp && docker compose up --build
+```
+
+**Accès:**
 - Backend: http://localhost:8000
 - MCP: http://localhost:8001
 - Swagger UI: http://localhost:8000/docs
-```
+
+→ **Détails:** Voir [`docs/SERVICES.md`](./docs/SERVICES.md)
 
 **Tester:**
 ```bash

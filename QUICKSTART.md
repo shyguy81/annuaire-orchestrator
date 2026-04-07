@@ -2,15 +2,26 @@
 
 ## Démarrage
 
+Chaque service est autonome avec son propre `docker-compose.yml`.
+
+**Terminal 1: Backend**
 ```bash
-cd ..  # Aller à la racine (annuaire-contacts/)
-docker-compose up --build
+cd backend-fastapi
+docker compose up --build
+```
+
+**Terminal 2: MCP (attendre que backend soit prêt)**
+```bash
+cd mcp-fast-mcp
+docker compose up --build
 ```
 
 **Services prêts:**
-- Backend: http://localhost:8000
-- MCP: http://localhost:8001
+- Backend: http://localhost:8000 (CRUD contacts)
+- MCP: http://localhost:8001 (Search, summary, suggestions)
 - Docs API: http://localhost:8000/docs
+
+→ **Plus d'infos:** [`docs/SERVICES.md`](./docs/SERVICES.md)
 
 ## Tests rapides
 

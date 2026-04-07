@@ -1,20 +1,34 @@
 # Guide de Déploiement
 
+Services autonomes: chacun peut être déployé indépendamment.
+
 ---
 
 ## Environnements
 
 ### Développement (Local)
 
+**Terminal 1: Backend**
 ```bash
-cd /media/tjeanbaptiste/PUBLIC/annuaire-contacts
+cd backend-fastapi
+cp .env.example .env  # Configurer si besoin
 docker compose up --build
 ```
 
+**Terminal 2: MCP**
+```bash
+cd mcp-fast-mcp
+cp .env.example .env  # Configurer si besoin
+docker compose up --build
+```
+
+**Accès:**
 - Backend: http://localhost:8000
 - MCP: http://localhost:8001
 - Swagger UI: http://localhost:8000/docs
-- Base de données: SQLite en mémoire (données perdues au redémarrage)
+- Database: `backend-fastapi/data/contacts.db`
+
+→ **Détails:** Voir `docs/SERVICES.md`
 
 ---
 
@@ -28,27 +42,35 @@ docker compose up --build
 
 ### Variables d'Environnement
 
-**Backend:**
+**Backend** (`backend-fastapi/.env`):
 ```env
 DATABASE_URL=sqlite:///./data/contacts.db
 LOG_LEVEL=INFO
 ```
 
-**MCP:**
+**MCP** (`mcp-fast-mcp/.env`):
 ```env
-BACKEND_URL=http://backend:8000
+BACKEND_URL=http://localhost:8000  # Ou IP backend en prod
 LOG_LEVEL=INFO
 ```
 
 ### Fichiers
 
-- `.env` — Variables d'environnement (NE PAS committer)
-- `.env.example` — Template (committer comme référence)
+- `backend-fastapi/.env.example` — Template backend
+- `mcp-fast-mcp/.env.example` — Template MCP
+- **NE PAS committer** les fichiers `.env` (secrets)
 
 **Setup:**
 ```bash
-cp orchestrator/.env.example .env
-# Éditer .env avec vos valeurs
+# Backend
+cd backend-fastapi
+cp .env.example .env
+# Éditer .env si besoin
+
+# MCP
+cd ../mcp-fast-mcp
+cp .env.example .env
+# Éditer .env si besoin
 ```
 
 ---

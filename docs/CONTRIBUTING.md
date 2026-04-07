@@ -26,31 +26,28 @@ ls -la mcp-fast-mcp/.git
 ls -la orchestrator/.git
 ```
 
-### 2. Installer dépendances
+### 2. Démarrer les services
 
+**Services autonomes → démarrer indépendamment**
+
+**Terminal 1: Backend**
 ```bash
-# Backend
 cd backend-fastapi
-pip install -r requirements.txt
-
-# MCP
-cd ../mcp-fast-mcp
-pip install -r requirements.txt
-
-# Retour à la racine
-cd ..
+docker compose up --build
 ```
 
-### 3. Démarrer les services
-
+**Terminal 2: MCP (une fois backend prêt)**
 ```bash
+cd ../mcp-fast-mcp
 docker compose up --build
 ```
 
 **Accès:**
 - Backend API: http://localhost:8000/docs (Swagger)
-- MCP: http://localhost:8001/health
-- Base de données: `./data/contacts.db`
+- MCP Health: http://localhost:8001/health
+- Base de données: `backend-fastapi/data/contacts.db`
+
+→ **Détails:** Voir `docs/SERVICES.md`
 
 ---
 

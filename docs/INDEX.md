@@ -19,6 +19,7 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 
 | Document | Contenu | Pour Qui |
 |----------|---------|----------|
+| **[SERVICES.md](./SERVICES.md)** | Démarrage autonome, options lancement | Tous (lire en premier après README) |
 | **[API.md](./API.md)** | Endpoints backend détaillés, schemas, exemples | Développeurs backend, intégrateurs |
 | **[MCP.md](./MCP.md)** | Endpoints MCP pour IA, use cases, architecture | Développeurs IA, agents, intégrateurs |
 | **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Design système, flux, services | Architectes, leads techniques |
@@ -29,21 +30,30 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 
 ## 🚀 Tâches Courantes
 
+### Je veux démarrer les services
+
+1. **Lire:** `SERVICES.md` (5 min)
+2. **Terminal 1:** `cd backend-fastapi && docker compose up`
+3. **Terminal 2:** `cd mcp-fast-mcp && docker compose up`
+4. **Tester:** Exemples curl dans QUICKSTART.md
+
+---
+
 ### Je veux ajouter un nouvel endpoint
 
 1. **Lire:** `CONTRIBUTING.md` → "Ajouter une Nouvelle Fonctionnalité"
 2. **Implémenter:** Code dans `backend-fastapi/` ou `mcp-fast-mcp/`
-3. **Tester:** Exemples curl dans QUICKSTART
+3. **Tester:** `docker compose up --build` depuis le dossier
 4. **Documenter:** Ajouter détails dans API.md ou MCP.md
-5. **Commit:** Depuis le repo technique, pas orchestrator
+5. **Commit:** Depuis le repo technique
 
 ---
 
 ### Je veux déployer en production
 
 1. **Lire:** `DEPLOYMENT.md` → section pertinente
-2. **Configurer:** Variables `.env` et `docker-compose.yml`
-3. **Backup:** Setup automatisé
+2. **Configurer:** Variables `.env` pour chaque service
+3. **Lancer:** Services indépendants ou avec Docker network
 4. **Monitor:** Health checks + logs
 
 ---
@@ -91,11 +101,12 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 
 ## 🔗 Liens Rapides
 
-### Accès Services (Après `docker compose up`)
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+### Accès Services (Après démarrage depuis chaque dossier)
+- Backend Swagger UI: http://localhost:8000/docs
+- Backend ReDoc: http://localhost:8000/redoc
+- Backend Health: http://localhost:8000/health
 - MCP Health: http://localhost:8001/health
-- Database: `./data/contacts.db`
+- Database Backend: `backend-fastapi/data/contacts.db`
 
 ### Documentation Technique
 - **Backend:** `../backend-fastapi/` (code source)
@@ -103,9 +114,12 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 - **Règles:** `../.claude/rules/annuaire-contacts-rules.md` (5 règles)
 
 ### Fichiers Config
-- `.env.example` — Template variables
-- `docker-compose.yml` — Orchestration
-- `requirements.txt` — Dépendances (backend + mcp)
+- `backend-fastapi/.env.example` — Template variables backend
+- `mcp-fast-mcp/.env.example` — Template variables MCP
+- `backend-fastapi/docker-compose.yml` — Service backend
+- `mcp-fast-mcp/docker-compose.yml` — Service MCP
+- `backend-fastapi/requirements.txt` — Dépendances backend
+- `mcp-fast-mcp/requirements.txt` — Dépendances MCP
 
 ---
 
