@@ -14,7 +14,7 @@ spec:
     matchLabels:
       app: py
   serviceName: "py"
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -58,7 +58,6 @@ spec:
           persistentVolumeClaim:
             claimName: annuaire-py-sourcecode-pvc # Utilise le PVC
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

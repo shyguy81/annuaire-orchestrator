@@ -42,3 +42,10 @@ kubectl -n annuaire rollout status sts/py-ss
 ```bash
 kubectl apply -f _ingress/
 ```
+
+## Monitoring
+
+```bash
+kubectl -n annuaire top pods
+kubectl top pods
+```
