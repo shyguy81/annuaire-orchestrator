@@ -23,6 +23,9 @@ kubectl -n annuaire get deploy
 kubectl apply -f _db/ann-mariadb-pvc.yaml
 kubectl apply -f _db/mariadb.yaml
 kubectl apply -f _db/
+```
+
+```bash
 #
 kubectl apply -f _cm/
 #
@@ -30,8 +33,10 @@ kubectl delete -f _fastapi/
 kubectl apply -f _fastapi/
 #
 kubectl -n annuaire describe pods py-ss-0
-#
 kubectl -n annuaire logs -f py-ss-0
+#
+kubectl -n annuaire rollout restart sts/py-ss
+kubectl -n annuaire rollout status sts/py-ss
 ```
 
 ```bash
