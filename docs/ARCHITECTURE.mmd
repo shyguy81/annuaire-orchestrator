@@ -1,0 +1,79 @@
+graph TB
+    subgraph Clients["🖥️ Clients"]
+        HTTPClient["HTTP Client<br/>(8000)"]
+        AIClient["AI Client<br/>(HTTPS)"]
+    end
+
+    subgraph BackendStack["Backend Stack (backend-fastapi/)"]
+        subgraph BackendCompose["docker-compose.yml"]
+            API["🟦 FastAPI Backend<br/>Port: 8000<br/>Container: annuaire-backend"]
+            MariaDB["🗄️ MariaDB 11.2<br/>Port: 3306 (interne)<br/>Port: 3307 (local)<br/>Container: annuaire-mariadb"]
+        end
+
+        API -->|SQL| MariaDB
+        MariaDB -->|Healthcheck| MariaDB
+    end
+
+    subgraph MCPStack["MCP Stack (mcp-fast-mcp/)"]
+        subgraph MCPCompose["docker-compose.yml"]
+            MCPApp["🟦 FastAPI MCP<br/>Port: 8000 (interne)<br/>Container: annuaire-mcp"]
+            Nginx["🔄 Nginx Reverse Proxy<br/>Port: 80 (HTTP)<br/>Port: 443 (HTTPS)<br/>Container: annuaire-mcp-nginx"]
+
+            subgraph NginxConfig["Nginx Configuration"]
+                NginxConf["nginx.conf<br/>docker/nginx/"]
+                ConfD["conf.d/default.conf<br/>VHost config"]
+            end
+
+            subgraph TLS["TLS Certificates"]
+                Certs["mkcert autosignés<br/>docker/certs/"]
+            end
+        end
+
+        MCPApp -->|Upstream| Nginx
+        Nginx -->|Load| MCPApp
+        Nginx -->|Uses| TLS
+        NginxConf -->|Includes| ConfD
+    end
+
+    subgraph SharedNetwork["Network & Communication"]
+        MCPNetwork["mcp-network<br/>(bridge driver)"]
+    end
+
+    subgraph Data["Persistent Data"]
+        MariaDBVol["Volume: mariadb_data"]
+    end
+
+    %% Client connections
+    HTTPClient -->|curl 8000/api| API
+    HTTPClient -->|curl 8000/docs| API
+    AIClient -->|curl -k 443/search| Nginx
+
+    %% Backend connections
+    MariaDB -->|persistence| MariaDBVol
+    API -->|httpx client| MCPApp
+
+    %% Network setup
+    MCPApp -.->|member| MCPNetwork
+    Nginx -.->|member| MCPNetwork
+
+    %% Health checks
+    API -->|GET /health| API
+    MCPApp -->|GET /health| MCPApp
+    Nginx -->|Health Check| MCPApp
+    MariaDB -->|mariadb-admin ping| MariaDB
+
+    style BackendStack fill:#e1f5ff
+    style MCPStack fill:#f3e5f5
+    style Clients fill:#fff3e0
+    style SharedNetwork fill:#f1f8e9
+    style Data fill:#fce4ec
+
+    classDef container fill:#90caf9,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef config fill:#ce93d8,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef data fill:#f48fb1,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef network fill:#a5d6a7,stroke:#388e3c,stroke-width:2px,color:#000
+
+    class API,MariaDB,MCPApp,Nginx container
+    class NginxConf,ConfD,TLS config
+    class MariaDBVol data
+    class MCPNetwork network

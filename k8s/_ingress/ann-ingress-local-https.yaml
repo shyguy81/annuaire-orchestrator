@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: annuaire-ingress
+  namespace: annuaire
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/use-regex: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-access-log: "true"
+    nginx.ingress.kubernetes.io/access-log-format: '{"time":"$time_iso8601","remote_addr":"$proxy_protocol_addr","x-forward-for":"$proxy_add_x_forwarded_for","request":"$request","status":$status,"body_bytes_sent":$body_bytes_sent,"request_time":$request_time,"upstream_response_time":"$upstream_response_time","upstream_addr":"$upstream_addr","host":"$host"}'
+
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - annuaire-api.demo.docker.dev
+      secretName: annuaire-tls
+  rules:
+    - host: annuaire-api.demo.docker.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: annuaire-py-svc
+                port:
+                  number: 8000

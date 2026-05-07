@@ -1,0 +1,4 @@
+ghcr-secret.yaml
+
+*.pem
+base64_*.txt

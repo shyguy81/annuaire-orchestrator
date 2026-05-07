@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: py-sa
+  namespace: annuaire
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: py-ss
+  namespace: annuaire
+spec:
+  selector:
+    matchLabels:
+      app: py
+  serviceName: "py"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: py
+    spec:
+      serviceAccountName: py-sa
+      containers:
+        - name: py
+          image: ghcr.io/shyguy81/backend-fastapi/backend-api:latest
+          envFrom:
+            - configMapRef:
+                name: annuaire-config
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: py-code
+              mountPath: /app-data # Monte le code FastAPI ici
+      volumes:
+        - name: py-code
+          persistentVolumeClaim:
+            claimName: annuaire-py-sourcecode-pvc # Utilise le PVC
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: annuaire-py-svc
+  namespace: annuaire
+spec:
+  selector:
+    app: py
+  ports:
+    - name: fastapi-container
+      protocol: TCP
+      port: 8000
+      targetPort: 8000

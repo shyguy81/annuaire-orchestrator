@@ -19,7 +19,7 @@ docker compose up --build
 - API: http://localhost:8000
 - Swagger UI: http://localhost:8000/docs
 - Health: http://localhost:8000/health
-- Database: `./data/contacts.db`
+- Database: MariaDB (port 3307 local → 3306 interne, container: `annuaire-mariadb`)
 
 ### Endpoints disponibles
 
@@ -34,18 +34,26 @@ curl http://localhost:8000/contacts
 
 # Chercher
 curl "http://localhost:8000/contacts/search/test"
+
+# Health check
+curl http://localhost:8000/health
 ```
 
 ### Variables d'environnement
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DATABASE_URL` | `sqlite:///./data/contacts.db` | String de connexion DB |
+| `DATABASE_URL` | `mysql+pymysql://annuaire_user:annuaire_password@mariadb:3306/annuaire_contacts` | String de connexion MariaDB |
 | `LOG_LEVEL` | `INFO` | Niveau de log |
+
+**MariaDB Automatique:**
+- Démarré automatiquement dans docker-compose
+- Healthcheck: ping mariadb
+- Volume: `mariadb_data` (persistence)
 
 ---
 
-## Serveur MCP
+## Serveur MCP (avec Nginx Reverse Proxy)
 
 **Localisation:** `mcp-fast-mcp/docker-compose.yml`
 
@@ -57,28 +65,41 @@ docker compose up --build
 ```
 
 **Accès:**
-- MCP Server: http://localhost:8001
-- Health: http://localhost:8001/health
+- MCP HTTP: http://localhost (port 80)
+- MCP HTTPS: https://localhost (port 443, certificat autosigné)
+- Hostname: `annuaire-mcp.local.docker.dev` (ou ajuster `/etc/hosts`)
+- Health: http://localhost/health
 
-**Important:** MCP appelle le backend en local (http://localhost:8000). Si backend n'est pas actif → erreurs.
+**Important:**
+1. MCP appelle le backend en local (http://localhost:8000) → Backend doit être démarré
+2. Nginx expose MCP en ports publics (80/443)
+3. TLS: Certificats autosignés dans `docker/certs/` (créés via mkcert)
 
 ### Endpoints disponibles
 
 ```bash
-# Chercher
-curl -X POST http://localhost:8001/search \
+# Chercher (via Nginx HTTP)
+curl -X POST http://localhost/search \
+  -H "Content-Type: application/json" \
+  -d '{"query":"test","limit":10}'
+
+# Chercher (via HTTPS, ignorer certif auto-signé)
+curl -k -X POST https://localhost/search \
   -H "Content-Type: application/json" \
   -d '{"query":"test","limit":10}'
 
 # Résumé
-curl -X POST http://localhost:8001/summary \
+curl -X POST http://localhost/summary \
   -H "Content-Type: application/json" \
   -d '{"contact_id":"<ID>"}'
 
 # Suggestions
-curl -X POST http://localhost:8001/suggestions \
+curl -X POST http://localhost/suggestions \
   -H "Content-Type: application/json" \
   -d '{"partial_name":"te","limit":5}'
+
+# Health check
+curl http://localhost/health
 ```
 
 ### Variables d'environnement
@@ -88,6 +109,18 @@ curl -X POST http://localhost:8001/suggestions \
 | `BACKEND_URL` | `http://localhost:8000` | URL backend (pour appels internes) |
 | `LOG_LEVEL` | `INFO` | Niveau de log |
 
+### Configuration Nginx
+
+**Fichiers:**
+- `docker/nginx/nginx.conf` — Config globale Nginx
+- `docker/nginx/conf.d/default.conf` — VHost pour annuaire-mcp
+- `docker/certs/` — Certificats TLS (mkcert autosignés)
+
+**Architecture Docker-Compose:**
+- Service `annuaire-mcp` (port 8000 interne)
+- Service `nginx` (ports 80/443 externes, reverse proxy)
+- Network `mcp-network` (bridge, communication intra-compose)
+
 ---
 
 ## Lancer les 2 Services Ensemble
@@ -95,13 +128,15 @@ curl -X POST http://localhost:8001/suggestions \
 ### Option 1: Terminal Séparé (Simple)
 
 ```bash
-# Terminal 1: Backend
+# Terminal 1: Backend (inclut MariaDB)
 cd backend-fastapi
 docker compose up --build
+# Attendre: "Uvicorn running on http://0.0.0.0:8000"
 
-# Terminal 2: MCP
+# Terminal 2: MCP (inclut Nginx)
 cd mcp-fast-mcp
 docker compose up --build
+# Attendre: "Uvicorn running on http://0.0.0.0:8000" (MCP interne) et nginx running
 ```
 
 Puis tester:
@@ -109,11 +144,14 @@ Puis tester:
 # Backend OK?
 curl http://localhost:8000/health
 
-# MCP OK?
-curl http://localhost:8001/health
+# MCP via Nginx OK?
+curl http://localhost/health
 
 # MCP appelle backend?
-curl -X POST http://localhost:8001/search -d '{"query":"test"}'
+curl -X POST http://localhost/search -d '{"query":"test","limit":10}'
+
+# HTTPS via Nginx (ignorer certificat auto-signé)?
+curl -k https://localhost/health
 ```
 
 ---
@@ -160,48 +198,31 @@ cd ../mcp-fast-mcp && docker compose down
 
 ---
 
-### Option 3: Docker Network (Recommandé Production)
+### Option 3: Architecture Actuelle (Services Autonomes)
 
-Créer un réseau partagé pour que les services communiquent:
+**État réel:** Les services sont déjà configurés pour autonomie maximale.
 
-**backend-fastapi/docker-compose.yml:**
-```yaml
-services:
-  backend:
-    networks:
-      - annuaire-net
+**Backend (docker-compose.yml):**
+- ✅ Service `mariadb` (port 3307 mapping)
+- ✅ Service `backend` (port 8000)
+- ✅ Healthcheck intégré
 
-networks:
-  annuaire-net:
-    driver: bridge
-```
+**MCP (docker-compose.yml):**
+- ✅ Service `annuaire-mcp` (port 8000 interne)
+- ✅ Service `nginx` (ports 80/443 publics, reverse proxy)
+- ✅ Network `mcp-network` (bridge)
+- ✅ Dépendance: nginx → annuaire-mcp
 
-**mcp-fast-mcp/docker-compose.yml:**
-```yaml
-services:
-  mcp:
-    environment:
-      - BACKEND_URL=http://backend:8000  # Nom du service backend
-    networks:
-      - annuaire-net
-    depends_on:
-      - backend  # Attendre que backend soit prêt
-
-  backend:
-    image: annuaire-contacts-backend:latest
-    networks:
-      - annuaire-net
-
-networks:
-  annuaire-net:
-    driver: bridge
-```
-
-Puis:
+**Lancer ensemble:**
 ```bash
-# Depuis racine
+# Terminal 1
+cd backend-fastapi && docker compose up --build
+
+# Terminal 2 (dans un autre terminal, après que backend soit prêt)
 cd mcp-fast-mcp && docker compose up --build
 ```
+
+**Note:** Les services ne partagent pas encore un réseau unique pour communication intra-compose. Backend est accessible via `localhost:8000` depuis hôte ou depuis MCP container via `host.docker.internal:8000` si nécessaire.
 
 ---
 
@@ -243,22 +264,26 @@ Si erreur `Connection refused` → Backend n'est pas démarré.
 ## Checklist Démarrage Complet
 
 ```bash
-# Terminal 1: Backend
+# Terminal 1: Backend (+ MariaDB)
 cd backend-fastapi
 docker compose up --build
-# Attendre: "Uvicorn running on http://0.0.0.0:8000"
+# Attendre: 
+#   - "mariadb_1 | ready for connections"
+#   - "Uvicorn running on http://0.0.0.0:8000"
 
-# Terminal 2: MCP (une fois backend prêt)
+# Terminal 2: MCP (+ Nginx) — une fois backend prêt
 cd ../mcp-fast-mcp
 docker compose up --build
-# Attendre: "Uvicorn running on http://0.0.0.0:8001"
+# Attendre: 
+#   - "Uvicorn running on http://0.0.0.0:8000" (MCP interne)
+#   - "nginx_1 | [notice] worker process started" ou "GET / HTTP/1.1" 200
 
 # Terminal 3: Tests
-curl http://localhost:8000/health          # ✅ OK?
-curl http://localhost:8001/health          # ✅ OK?
-curl -X POST http://localhost:8001/search \
+curl http://localhost:8000/health          # Backend ✅ OK?
+curl http://localhost/health                # MCP via Nginx ✅ OK?
+curl -X POST http://localhost/search \
   -H "Content-Type: application/json" \
-  -d '{"query":"test"}'                    # ✅ OK?
+  -d '{"query":"test","limit":10}'         # MCP search ✅ OK?
 ```
 
 ---

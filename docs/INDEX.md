@@ -7,11 +7,12 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 ## 📖 Démarrage Rapide
 
 **Je suis nouveau et je veux démarrer:**
-1. Lire [`README.md`](../README.md) (3 min)
-2. Lancer `docker compose up` (2 min)
-3. Essayer les exemples curl dans [`QUICKSTART.md`](../QUICKSTART.md) (5 min)
+1. Voir [`ARCHITECTURE-DIAGRAM.md`](./ARCHITECTURE-DIAGRAM.md) (2 min, diagramme visuel)
+2. Lire [`README.md`](../README.md) (3 min)
+3. Lancer services (voir [`SERVICES.md`](./SERVICES.md)) (2 min)
+4. Essayer exemples curl dans [`QUICKSTART.md`](../QUICKSTART.md) (5 min)
 
-**Total:** ~10 min pour avoir un système fonctionnel
+**Total:** ~12 min pour comprendre l'architecture et avoir un système fonctionnel
 
 ---
 
@@ -19,6 +20,7 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 
 | Document | Contenu | Pour Qui |
 |----------|---------|----------|
+| **[ARCHITECTURE-DIAGRAM.md](./ARCHITECTURE-DIAGRAM.md)** | 📊 Diagramme visuel + composants + flux | Tous (vue globale d'abord) |
 | **[SERVICES.md](./SERVICES.md)** | Démarrage autonome, options lancement | Tous (lire en premier après README) |
 | **[API.md](./API.md)** | Endpoints backend détaillés, schemas, exemples | Développeurs backend, intégrateurs |
 | **[MCP.md](./MCP.md)** | Endpoints MCP pour IA, use cases, architecture | Développeurs IA, agents, intégrateurs |
@@ -102,11 +104,22 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 ## 🔗 Liens Rapides
 
 ### Accès Services (Après démarrage depuis chaque dossier)
-- Backend Swagger UI: http://localhost:8000/docs
-- Backend ReDoc: http://localhost:8000/redoc
-- Backend Health: http://localhost:8000/health
-- MCP Health: http://localhost:8001/health
-- Database Backend: `backend-fastapi/data/contacts.db`
+
+**Backend (port 8000):**
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- Health: http://localhost:8000/health
+
+**MCP (via Nginx port 80/443):**
+- Health HTTP: http://localhost/health
+- Health HTTPS: https://localhost/health (certificat auto-signé, use `-k`)
+- Search HTTP: http://localhost/search
+- Search HTTPS: https://localhost/search
+
+**Database:**
+- MariaDB: `localhost:3307` (mapping dev, container: 3306)
+- Credentials: `annuaire_user` / `annuaire_password`
+- Database: `annuaire_contacts`
 
 ### Documentation Technique
 - **Backend:** `../backend-fastapi/` (code source)
@@ -138,12 +151,13 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 
 ## 🗺️ Roadmap Doc
 
+- [x] Diagrammes architecture (Mermaid) — `ARCHITECTURE-DIAGRAM.md`
 - [ ] Video tutorial (démarrage 5 min)
-- [ ] Diagrammes architecture (Mermaid)
 - [ ] API OpenAPI spec téléchargeable
 - [ ] Exemples Postman/Insomnia
 - [ ] FAQ (questions fréquentes)
 - [ ] Glossaire (terminologie)
+- [ ] Schéma de données (ERD)
 
 ---
 

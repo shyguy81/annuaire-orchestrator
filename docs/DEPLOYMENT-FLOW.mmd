@@ -1,0 +1,56 @@
+graph LR
+    subgraph CICD["🔄 CI/CD Pipeline"]
+        A["📝 Push Code<br/>git push → main"]
+        B["⚙️ GitHub Actions"]
+        C["🔨 Build<br/>docker build"]
+        D["📦 Push Image<br/>ghcr.io"]
+    end
+
+    subgraph REGISTRY["🗃️ Image Registry"]
+        REG["backend:latest"]
+    end
+
+    subgraph K8S["☸️ Kubernetes - Production"]
+        PULL["🔄 Pull Latest"]
+        DEPLOY["🚀 Deployment"]
+        POD1["📦 Pod 1<br/>backend"]
+        POD2["📦 Pod 2<br/>backend"]
+        POD3["📦 Pod 3<br/>backend"]
+        SVC["🔗 Service<br/>8000"]
+        ING["🌐 Ingress<br/>TLS"]
+    end
+
+    subgraph CLIENT["💻 Client"]
+        WS["🖥️ Workstation"]
+    end
+
+    A --> B --> C --> D
+    D --> REG
+    REG --> PULL
+    PULL --> DEPLOY
+    DEPLOY --> POD1
+    DEPLOY --> POD2
+    DEPLOY --> POD3
+    POD1 --> SVC
+    POD2 --> SVC
+    POD3 --> SVC
+    SVC --> ING
+    ING <-->|HTTP/HTTPS<br/>backend.example.com| WS
+
+    style A fill:#0288d1,stroke:#01579b,stroke-width:3px,color:#fff
+    style B fill:#ff6f00,stroke:#e65100,stroke-width:3px,color:#fff
+    style C fill:#ff6f00,stroke:#e65100,stroke-width:3px,color:#fff
+    style D fill:#7b1fa2,stroke:#4a148c,stroke-width:3px,color:#fff
+    style REG fill:#7b1fa2,stroke:#4a148c,stroke-width:3px,color:#fff
+    style PULL fill:#388e3c,stroke:#1b5e20,stroke-width:3px,color:#fff
+    style DEPLOY fill:#388e3c,stroke:#1b5e20,stroke-width:3px,color:#fff
+    style POD1 fill:#43a047,stroke:#2e7d32,stroke-width:3px,color:#fff
+    style POD2 fill:#43a047,stroke:#2e7d32,stroke-width:3px,color:#fff
+    style POD3 fill:#43a047,stroke:#2e7d32,stroke-width:3px,color:#fff
+    style SVC fill:#0277bd,stroke:#01579b,stroke-width:3px,color:#fff
+    style ING fill:#ff8f00,stroke:#e65100,stroke-width:3px,color:#fff
+    style WS fill:#689f38,stroke:#558b2f,stroke-width:3px,color:#fff
+    style CICD fill:#e0e0e0,stroke:#424242,stroke-width:3px
+    style REGISTRY fill:#e0e0e0,stroke:#424242,stroke-width:3px
+    style K8S fill:#e0e0e0,stroke:#424242,stroke-width:3px
+    style CLIENT fill:#e0e0e0,stroke:#424242,stroke-width:3px

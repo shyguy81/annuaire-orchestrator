@@ -7,19 +7,30 @@ Dossier de **documentation + règles** (pas de code ni orchestration Docker).
 ```
 annuaire-contacts/
 ├── orchestrator/              ← ce dossier (DOC + RÈGLES)
-│   ├── docs/                  → Toute la documentation
+│   ├── docs/                  → Documentation complète
 │   ├── CLAUDE.md              → Ce fichier (règles projet)
+│   ├── DIAGNOSTIC.md          → Changements récents
 │   └── .claude/rules/         → 5 règles non-négociables
 │
-├── backend-fastapi/           ← Service autonome (port 8000)
+├── backend-fastapi/           ← Service autonome (port 8000 API + 3307 DB)
 │   ├── docker-compose.yml     → Démarrage: cd backend-fastapi && docker compose up
-│   ├── main.py, models.py
-│   └── Dockerfile
+│   │                             (inclut MariaDB + healthcheck)
+│   ├── main.py, models.py, database.py
+│   ├── Dockerfile
+│   └── .git/                  → Repo autonome
 │
-└── mcp-fast-mcp/              ← Service autonome (port 8001)
-    ├── docker-compose.yml     → Démarrage: cd mcp-fast-mcp && docker compose up
-    ├── main.py, models.py
-    └── Dockerfile
+├── mcp-fast-mcp/              ← Service autonome (port 80/443 via Nginx)
+│   ├── docker-compose.yml     → Démarrage: cd mcp-fast-mcp && docker compose up
+│   │                             (inclut Nginx reverse proxy + TLS)
+│   ├── main.py, models.py
+│   ├── backend_client.py      → Client httpx vers backend
+│   ├── docker/                → CONFIG NGINX + CERTIFICATS TLS
+│   │   ├── certs/             → Certificats autosignés (mkcert)
+│   │   └── nginx/             → Config Nginx (nginx.conf + conf.d/)
+│   ├── Dockerfile
+│   └── .git/                  → Repo autonome
+│
+└── data/                      ← Dossier données (volumes Docker)
 ```
 
 ## Rôle de l'orchestrateur

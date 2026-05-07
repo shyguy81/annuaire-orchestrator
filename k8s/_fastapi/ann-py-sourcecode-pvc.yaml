@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: annuaire
+  name: annuaire-py-sourcecode-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /volume1/kubernetes/py-sourcecode-annuaire/
+    server: 192.168.100.251 # Adresse IP du NAS (même que MariaDB)
+  mountOptions:
+    - nfsvers=4.1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: annuaire-py-sourcecode-pvc
+  namespace: annuaire
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
