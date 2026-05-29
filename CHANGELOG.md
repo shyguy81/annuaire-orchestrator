@@ -82,10 +82,13 @@ curl -k https://localhost/health      # -k ignore certificat auto-signé
 
 ### Known Issues / TODO
 
-- [ ] `data/` folder — Usage unclear (données partagées? Quoi persister?)
-- [ ] `mcp-fast-mcp/scripts/` — Vide, but presente → documenter ou supprimer?
-- [ ] Network isolation — Backend & MCP sur réseaux différents? À clarifier si comm intra-compose
-- [ ] Production TLS — Remplacer mkcert par Let's Encrypt ou CA interne
+**→ Tous les TODOs sont centralisés dans [MASTER-BACKLOG.md](./MASTER-BACKLOG.md)**
+
+Avant centralisation:
+- MAINT-1: data/ folder (P2)
+- MAINT-2: mcp-fast-mcp/scripts/ (P2)
+- MAINT-3: Network isolation (P1)
+- MAINT-4: Production TLS (P1)
 
 ### Breaking Changes
 
