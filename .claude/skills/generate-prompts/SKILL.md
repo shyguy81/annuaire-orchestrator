@@ -10,19 +10,19 @@ Piloter les dossiers techniques (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire
 ## 🎯 Principes
 
 - **Règle 2 du projet:** Ne jamais modifier les repos techniques depuis l'orchestrator
-- **Pattern:** Créer un prompt → naviguer dans le repo → exécuter le prompt → archiver
+- **Pattern:** Créer un prompt auto-exécutable avec instruction de renommage intégrée
 - **Isolation:** Chaque modification reste commitée dans son propre repo
-- **Traçabilité:** `git log` reflète l'historique complet
+- **Traçabilité:** Chaque prompt auto-documente son cycle de vie
 
 ## 📋 Workflow
 
-### Étape 1: Créer un prompt jetable dans le repo technique
+### Étape 1: Créer et déposer le prompt dans le repo technique
 
 ````bash
-# Exemple: modifier le backend
+# Naviguer dans le repo technique
 cd ../annuaire-fastapi
 
-# Créer le prompt d'inbox
+# Créer le prompt avec instruction complète
 cat > .github/prompts/edit--inbox--fix-contact-validation.md << 'EOF'
 # Fix: Améliorer la validation des contacts
 
@@ -49,11 +49,11 @@ EOF
 
 ```
 
-Le prompt est maintenant prêt à être ouvert et exécuté dans Copilot.
+Le prompt est prêt. Ouvrir le fichier dans VS Code et exécuter le prompt avec Copilot.
 
 ## 🗂️ Structure attendue
 
-Chaque repo technique (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire-cli/`) doit avoir:
+Chaque repo technique doit avoir:
 
 ```
 
@@ -63,11 +63,10 @@ Chaque repo technique (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire-cli/`) do
 │ ├── edit--inbox--yyy.md ← À traiter
 │ ├── edit--done--old-fix.md ← Archivé
 │ └── refactor--done--api.md ← Archivé
-└── workflows/ ← CI/CD (optionnel)
 
-`````
+````
 
-### Conventions de nommage
+## 🏷️ Conventions de nommage
 
 | Préfixe             | Sens                          |
 | ------------------- | ----------------------------- |
@@ -80,52 +79,43 @@ Chaque repo technique (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire-cli/`) do
 
 ## 💡 Exemples de prompts
 
-### Template de prompt complet
+### Template complet
 
-````markdown
+```markdown
 # [Type]: [Titre court]
 
 ## Contexte (optionnel)
-
 Explications utiles...
 
 ## Tâche
-
 - Étape 1
 - Étape 2
 - Étape 3
 
 ## Validation
-
 - Critère de succès 1
 - Critère de succès 2
 
 ## ✅ Fin du traitement
-
-Une fois les modifications terminées, renommer ce fichier:
-
+Renommer ce fichier:
 ```bash
 mv .github/prompts/[type]--inbox--[nom].md \
    .github/prompts/[type]--done--[nom].md
-`````
+````
 
-```
-
-```
+````
 
 ### Exemple 1: Correction simple
 
-````markdown
+```markdown
 # Fix: Typo dans la doc
 
-Corriger "teh" → "the" dans [docs/API.md](docs/API.md)
+Corriger "teh" → "the" dans docs/API.md
 
 ## ✅ Fin du traitement
-
 ```bash
 mv .github/prompts/edit--inbox--typo-doc.md \
    .github/prompts/edit--done--typo-doc.md
-```
 ````
 
 ````
@@ -136,13 +126,11 @@ mv .github/prompts/edit--inbox--typo-doc.md \
 # Feature: Export JSON des contacts
 
 ## Tâche
-
 - Ajouter endpoint `GET /contacts/export.json` dans `main.py`
 - Retourner tous les contacts en JSON
 - Ajouter test dans `test_api.py`
 
 ## Validation
-
 - `pytest` passe
 - `curl http://localhost:8000/contacts/export.json` fonctionne
 
@@ -160,17 +148,14 @@ mv .github/prompts/feature--inbox--export-json.md \
 # Refactor: Découpler la logique de validation
 
 ## Contexte
-
 `models.py` est responsable à la fois de la validation ET du mapping DB.
 
 ## Tâche
-
 - Créer `validators.py` avec logique de validation
 - Importer depuis `models.py`
 - Vérifier tests passent
 
 ## Validation
-
 - `pytest` 100% pass
 - Coverage > 80%
 
@@ -182,71 +167,60 @@ mv .github/prompts/refactor--inbox--decouple-validation.md \
 
 ```
 
-## 🔄 Cycle de vie d'un prompt
+## 🔄 Cycle de vie
 
 ```
 
-inbox (À faire)
+Créer prompt (--inbox--)
 ↓
-Ouvert dans Copilot
+Ouvrir dans VS Code
 ↓
-Modifications appliquées
+Invoquer @prompt-name
 ↓
-Tests passent
+Copilot exécute les modifications
 ↓
-done (Archivé)
+Renommer en --done--
 ↓
-git commit depuis le repo technique
+Commit depuis le repo technique
 
 ````
 
 ## ⚙️ Intégration avec orchestrator
 
-**Depuis l'orchestrator**, on peut:
+Depuis l'orchestrator:
 
-1. **Documenter la tâche** → crée un prompt dans le bon repo
-2. **Vérifier l'avancement** → checker `.github/prompts/` de chaque repo
-3. **Coordonner plusieurs repos** → créer prompts en cascade
-4. **Pas modifier directement** → les modifications restent dans leur repo
+1. **Créer des prompts** dans les repos techniques
+2. **Vérifier l'avancement** en checkant `.github/prompts/` de chaque repo
+3. **Coordonner multi-repos** en créant des prompts en cascade
+4. **Ne pas modifier directement** — toutes les modifications restent dans le repo technique
 
 ### Exemple: Coordination multi-repos
 
 ```markdown
 # Coordination: Ajouter authentification JWT
 
-## Repos affectés
+Créer ces prompts dans leurs repos respectifs:
+- [ ] `feature--inbox--jwt-auth.md` dans `annuaire-fastapi`
+- [ ] `feature--inbox--jwt-client.md` dans `mcp-fast-mcp`
+- [ ] `feature--inbox--jwt-cli.md` dans `annuaire-cli`
 
-1. **annuaire-fastapi:** Implémenter auth JWT
-2. **mcp-fast-mcp:** Utiliser le nouveau client auth
-3. **annuaire-cli:** Passer le token aux appels
-
-## Ordre d'exécution
-
-1. Backend d'abord (endpoints)
-2. MCP ensuite (client)
-3. CLI en dernier (CLI)
-
-## Prompts à créer
-
-- [ ] `.github/prompts/feature--inbox--jwt-auth.md` dans `annuaire-fastapi`
-- [ ] `.github/prompts/feature--inbox--jwt-client.md` dans `mcp-fast-mcp`
-- [ ] `.github/prompts/feature--inbox--jwt-cli.md` dans `annuaire-cli`
+Ordre d'exécution: backend → mcp → cli
 ````
 
-## 🎓 Bonnes pratiques
+## ✅ Bonnes pratiques
 
-✅ **À faire:**
+À faire:
 
 - Un prompt = une tâche atomique
-- Inclure contexte + validation
-- Archiver après exécution
+- Inclure contexte + validation dans le prompt
+- Renommer après validation
 - Commit depuis le repo technique
 
-❌ **À éviter:**
+À éviter:
 
-- Prompts trop vagues
-- Modifications depuis orchestrator (même accidentelles)
-- Oublier d'archiver
+- Prompts trop vagues ou complexes
+- Modifications depuis orchestrator
+- Oublier de renommer en `--done--`
 - Commit depuis l'orchestrator
 
 ## 📚 Voir aussi
