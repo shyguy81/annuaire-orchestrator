@@ -1,0 +1,54 @@
+erDiagram
+    CONTACT ||--o{ RELATIONSHIP_PROFILE : has
+    CONTACT ||--o{ INTERACTION : records
+    CONTACT ||--o{ RELATIONSHIP_ACTION : tracks
+
+    CONTACT {
+        string id PK "UUID"
+        string nom "not null, indexed"
+        string email "not null, unique, indexed"
+        string telephone "nullable"
+        string adresse "nullable"
+        string organisation "nullable"
+        json tags "default: []"
+        datetime created_at
+        datetime updated_at
+    }
+
+    RELATIONSHIP_PROFILE {
+        string id PK "UUID"
+        string contact_id FK "not null, unique"
+        string relationship_type "prospect|client|partner|referrer|mentor|other"
+        string proximity_level "cold|warm|active|close"
+        string business_potential "unknown|low|medium|high"
+        int trust_level "1-5"
+        string context "nullable"
+        string notes "nullable"
+        datetime created_at
+        datetime updated_at
+    }
+
+    INTERACTION {
+        string id PK "UUID"
+        string contact_id FK "not null"
+        string interaction_type "email|call|meeting|linkedin|event|note"
+        datetime interaction_date "indexed"
+        string summary "not null"
+        string detected_need "nullable"
+        string value_given "nullable"
+        string next_step "nullable"
+        datetime created_at
+    }
+
+    RELATIONSHIP_ACTION {
+        string id PK "UUID"
+        string contact_id FK "not null"
+        string action_type "follow_up|send_resource|invite_coffee|propose_audit|introduce|other"
+        date due_date "indexed"
+        string status "todo|done|skipped"
+        string priority "low|medium|high"
+        string description "not null"
+        string outcome "nullable"
+        datetime created_at
+        datetime completed_at "nullable, set on complete"
+    }

@@ -1,0 +1,61 @@
+graph TB
+    subgraph Contact["📋 CONTACT (Existant)"]
+        C1["POST /contacts"]
+        C2["GET /contacts"]
+        C3["GET /contacts/{id}"]
+        C4["PUT /contacts/{id}"]
+        C5["DELETE /contacts/{id}"]
+        C6["GET /contacts/search/{query}"]
+    end
+
+    subgraph Profile["👤 RELATIONSHIP PROFILE (Nouveau)"]
+        P1["POST /contacts/{cid}/relationship-profile"]
+        P2["GET /contacts/{cid}/relationship-profile"]
+        P3["PATCH /contacts/{cid}/relationship-profile"]
+    end
+
+    subgraph History["📝 INTERACTIONS (Nouveau)"]
+        H1["POST /contacts/{cid}/interactions"]
+        H2["GET /contacts/{cid}/interactions"]
+    end
+
+    subgraph Actions["✅ RELATIONSHIP ACTIONS (Nouveau)"]
+        A1["POST /contacts/{cid}/relationship-actions"]
+        A2["GET /relationship-actions"]
+        A3["GET /relationship-actions/due"]
+        A4["PATCH /relationship-actions/{aid}"]
+        A5["PATCH /relationship-actions/{aid}/complete"]
+    end
+
+    subgraph Dashboard["📊 RAP DASHBOARD (Nouveau)"]
+        D1["GET /rap/dashboard"]
+    end
+
+    C3 -.->|uses| P2
+    C3 -.->|uses| H2
+    C5 -.->|cascades| P1
+    C5 -.->|cascades| H1
+    C5 -.->|cascades| A1
+
+    P1 -->|creates| Profile
+    P2 -->|reads| Profile
+    P3 -->|updates| Profile
+
+    H1 -->|creates| History
+    H2 -->|reads| History
+
+    A1 -->|creates| Actions
+    A2 -->|reads all| Actions
+    A3 -->|reads due| Actions
+    A4 -->|updates| Actions
+    A5 -->|completes| Actions
+
+    P2 -->|feeds| D1
+    H2 -->|feeds| D1
+    A2 -->|feeds| D1
+
+    style Contact fill:#e1f5ff
+    style Profile fill:#f3e5f5
+    style History fill:#e8f5e9
+    style Actions fill:#fff3e0
+    style Dashboard fill:#fce4ec

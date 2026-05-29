@@ -1,0 +1,54 @@
+sequenceDiagram
+    participant Client as 🖥️ Client
+    participant API as 🔗 API FastAPI
+    participant DB as 💾 MariaDB
+
+    Note over Client,DB: 1️⃣ Créer Contact + Profil Relationnel
+
+    Client->>API: POST /contacts
+    API->>DB: INSERT Contact
+    DB-->>API: contact_id (UUID)
+    API-->>Client: 201 { id, nom, email ... }
+
+    Client->>API: POST /contacts/{cid}/relationship-profile
+    API->>DB: INSERT RelationshipProfile (contact_id FK)
+    DB-->>API: profile_id
+    API-->>Client: 201 { relationship_type, proximity_level ... }
+
+    Note over Client,DB: 2️⃣ Enregistrer Interaction
+
+    Client->>API: POST /contacts/{cid}/interactions
+    API->>DB: INSERT Interaction (contact_id FK)
+    DB-->>API: interaction_id
+    API-->>Client: 201 { interaction_type, summary, detected_need ... }
+
+    Note over Client,DB: 3️⃣ Créer Action de Suivi
+
+    Client->>API: POST /contacts/{cid}/relationship-actions
+    API->>DB: INSERT RelationshipAction (contact_id FK)
+    DB-->>API: action_id
+    API-->>Client: 201 { action_type, due_date, status=todo ... }
+
+    Note over Client,DB: 4️⃣ Consulter Dashboard
+
+    Client->>API: GET /rap/dashboard
+    API->>DB: COUNT/AGGREGATE (all tables)
+    DB-->>API: { due_today, overdue, active_relations, high_potential, recent_interactions }
+    API-->>Client: 200 Dashboard Metrics
+
+    Note over Client,DB: 5️⃣ Compléter Action
+
+    Client->>API: PATCH /relationship-actions/{aid}/complete
+    API->>DB: UPDATE status=done, completed_at=NOW()
+    DB-->>API: updated action
+    API-->>Client: 200 { status, completed_at ... }
+
+    Note over Client,DB: 6️⃣ Supprimer Contact (Cascade)
+
+    Client->>API: DELETE /contacts/{cid}
+    API->>DB: DELETE Contact (cascade)
+    DB->>DB: CASCADE DELETE RelationshipProfile
+    DB->>DB: CASCADE DELETE Interactions
+    DB->>DB: CASCADE DELETE RelationshipActions
+    DB-->>API: 204 No Content
+    API-->>Client: 204
