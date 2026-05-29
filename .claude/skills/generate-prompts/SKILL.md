@@ -7,12 +7,35 @@ description: Génère des prompts pour piloter les dossiers techniques (`annuair
 
 Piloter les dossiers techniques via des **prompts jetables** auto-documentés et exécutables.
 
+## 📋 Contexte: Règle 2 (Fondation)
+
+### Énoncé
+
+`annuaire-fastapi/`, `mcp-fast-mcp/` et `annuaire-cli/` ne se modifient **jamais** depuis l'orchestrator.
+
+### Pourquoi?
+
+- **Repos technique = source de truth** des modifications
+- **Orchestrator = documentation + coordination** seulement
+- Sinon: git history perdue, CI/CD échoue, changements perdus
+
+### Conséquences si non-respectée
+
+- ❌ Modifs depuis ici = pas committées dans leur repo
+- ❌ Services restent en version ancienne
+- ❌ Impossible d'auditer les changements
+- ❌ Git history incohérente
+
+### Comment respecter cette règle?
+
+**Solution de cette skill:** Déposer les prompts **directement dans le repo technique** (`.github/prompts/`) pour que Copilot les exécute là-bas et commit dans le bon repo.
+
 ## 🎯 Principes
 
-- **Règle 2:** Ne jamais modifier les repos depuis l'orchestrator
 - **Pattern:** Créer un prompt auto-exécutable (renommage inclus)
 - **Isolation:** Chaque modification reste commitée dans son repo
 - **Traçabilité:** Chaque prompt auto-documente son cycle de vie
+- **Respect de Règle 2:** Modifications dans le repo technique, pas depuis l'orchestrator
 
 ## 📖 Référence rapide
 
@@ -58,8 +81,3 @@ PROMPT
 # 4. Renommer --inbox-- → --done--
 # 5. Commit
 ```
-
-## 📚 Voir aussi
-
-- [Règle 2: Repos techniques](../../rules/annuaire-contacts-rules.md#règle-2-ne-jamais-modifier-le-code-des-repos-liés)
-- [Règle 4: Commits depuis repos techniques](../../rules/annuaire-contacts-rules.md#règle-4-commiter-depuis-les-repos-techniques-pas-depuis-orchestrator)

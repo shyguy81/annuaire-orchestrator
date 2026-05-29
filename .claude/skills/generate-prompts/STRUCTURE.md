@@ -1,6 +1,16 @@
 # Structure des Prompts
 
-## 🗂️ Dossier `.github/prompts/`
+## 📍 Règle 2: Pourquoi dans le repo technique?
+
+**Énoncé:** `annuaire-fastapi/`, `mcp-fast-mcp/` et `annuaire-cli/` ne se modifient **jamais** depuis l'orchestrator.
+
+Les prompts se créent **dans chaque repo technique** (pas depuis l'orchestrator) en respect de cette contrainte.
+
+**Pourquoi:** Repos technique = source de truth. Orchestrator = documentation + coordination seulement.
+
+Déposer le prompt directement dans `.github/prompts/` du repo permet à Copilot de l'exécuter et de committer là-bas = git history correcte + audit clair.
+
+## �🗂️ Dossier `.github/prompts/`
 
 Chaque repo technique doit avoir:
 

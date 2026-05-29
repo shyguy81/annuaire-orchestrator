@@ -1,5 +1,22 @@
 # Guide — Créer et Exécuter un Prompt
 
+## ⚠️ Règle 2: Ne jamais modifier depuis l'orchestrator
+
+Les modifications **doivent se faire dans le repo technique**, pas depuis l'orchestrator.
+
+**Énoncé:** `annuaire-fastapi/`, `mcp-fast-mcp/` et `annuaire-cli/` ne se modifient **jamais** depuis ce dossier (l'orchestrator).
+
+**Pourquoi:** Repos technique = source de truth. Git history et CI/CD en dépendent.
+
+**Flux correct:**
+
+```
+orchestrator → créer prompt dans repo technique
+→ VS Code ouvre et exécute le prompt
+→ modifications appliquées dans repo technique
+→ commit DEPUIS repo technique (pas depuis orchestrator)
+```
+
 ## 🎯 Étapes
 
 ### 1️⃣ Naviguer vers le repo technique

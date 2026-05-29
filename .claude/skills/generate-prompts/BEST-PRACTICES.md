@@ -1,5 +1,36 @@
 # Bonnes Pratiques — Prompts Jetables
 
+## 🚨 Règle 2: Ne JAMAIS modifier depuis l'orchestrator
+
+**Énoncé:** `annuaire-fastapi/`, `mcp-fast-mcp/` et `annuaire-cli/` ne se modifient **jamais** depuis l'orchestrator.
+
+**Pourquoi:** Repos technique = source de truth. Orchestrator = documentation + coordination seulement.
+
+**Conséquences si non-respectée:**
+
+- ❌ Modifications perdues (pas committées dans le bon repo)
+- ❌ Git history incohérente
+- ❌ CI/CD échoue
+- ❌ Services restent en version ancienne
+- ❌ Impossible d'auditer les changements
+
+**Comment Faire:**
+
+```bash
+# ❌ MAUVAIS
+cd ../annuaire-fastapi
+# modifier src/main.py
+# commit depuis orchestrator
+
+# ✅ BON
+# 1. Créer prompt dans .github/prompts/ du repo technique
+# 2. Ouvrir et exécuter depuis VS Code
+# 3. Renommer --inbox-- → --done--
+# 4. Commit DEPUIS ce repo technique
+```
+
+**Cette skill = solution:** Déposer les prompts **dans le repo technique** pour que Copilot les exécute et commit là-bas.
+
 ## ✅ À faire
 
 ### Atomicité
