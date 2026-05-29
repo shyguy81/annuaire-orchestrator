@@ -18,7 +18,7 @@ Piloter les dossiers techniques (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire
 
 ### Étape 1: Créer un prompt jetable dans le repo technique
 
-```bash
+````bash
 # Exemple: modifier le backend
 cd ../annuaire-fastapi
 
@@ -37,53 +37,35 @@ La validation actuelle n'accepte pas les noms avec accents.
 ## Validation
 - Tests: `pytest tests/` passe
 - Linting: `flake8` clean
-EOF
-```
 
-### Étape 2: Inviter Copilot avec le prompt
-
+## ✅ Fin du traitement
+Une fois les modifications terminées, renommer ce fichier:
 ```bash
-# Dans VS Code, au sein du repo annuaire-fastapi
-# Ouvrir le prompt créé et invoquer: @edit--inbox--fix-contact-validation
-```
-
-### Étape 3: Archiver après exécution
-
-```bash
-# Une fois les modifications terminées
 mv .github/prompts/edit--inbox--fix-contact-validation.md \
    .github/prompts/edit--done--fix-contact-validation.md
+````
+
+EOF
+
 ```
 
-### Étape 4: Committer les modifications
-
-```bash
-# Après validation du prompt, committer tout:
-git add .
-git commit -m "[message pertinent décrivant les changements]"
-git push
-```
-
-### Étape 5: Revenir à orchestrator
-
-```bash
-cd ../annuaire-orchestrator
-# Documentation ou coordination suivante
-```
+Le prompt est maintenant prêt à être ouvert et exécuté dans Copilot.
 
 ## 🗂️ Structure attendue
 
 Chaque repo technique (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire-cli/`) doit avoir:
 
 ```
+
 .github/
 ├── prompts/
-│   ├── edit--inbox--xxx.md          ← À traiter
-│   ├── edit--inbox--yyy.md          ← À traiter
-│   ├── edit--done--old-fix.md       ← Archivé
-│   └── refactor--done--api.md       ← Archivé
-└── workflows/                        ← CI/CD (optionnel)
-```
+│ ├── edit--inbox--xxx.md ← À traiter
+│ ├── edit--inbox--yyy.md ← À traiter
+│ ├── edit--done--old-fix.md ← Archivé
+│ └── refactor--done--api.md ← Archivé
+└── workflows/ ← CI/CD (optionnel)
+
+`````
 
 ### Conventions de nommage
 
@@ -118,29 +100,32 @@ Explications utiles...
 - Critère de succès 1
 - Critère de succès 2
 
-## Après validation
+## ✅ Fin du traitement
 
-Renommer le fichier:
+Une fois les modifications terminées, renommer ce fichier:
 
 ```bash
 mv .github/prompts/[type]--inbox--[nom].md \
    .github/prompts/[type]--done--[nom].md
-```
-````
+`````
 
-````
+```
+
+```
 
 ### Exemple 1: Correction simple
 
-```markdown
+````markdown
 # Fix: Typo dans la doc
 
 Corriger "teh" → "the" dans [docs/API.md](docs/API.md)
 
-## Après validation
+## ✅ Fin du traitement
+
 ```bash
 mv .github/prompts/edit--inbox--typo-doc.md \
    .github/prompts/edit--done--typo-doc.md
+```
 ````
 
 ````
@@ -161,7 +146,7 @@ mv .github/prompts/edit--inbox--typo-doc.md \
 - `pytest` passe
 - `curl http://localhost:8000/contacts/export.json` fonctionne
 
-## Après validation
+## ✅ Fin du traitement
 ```bash
 mv .github/prompts/feature--inbox--export-json.md \
    .github/prompts/feature--done--export-json.md
@@ -189,7 +174,7 @@ mv .github/prompts/feature--inbox--export-json.md \
 - `pytest` 100% pass
 - Coverage > 80%
 
-## Après validation
+## ✅ Fin du traitement
 ```bash
 mv .github/prompts/refactor--inbox--decouple-validation.md \
    .github/prompts/refactor--done--decouple-validation.md
