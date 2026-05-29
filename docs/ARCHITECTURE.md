@@ -16,10 +16,10 @@ Backend FastAPI                Nginx Reverse Proxy
 ## Services (Autonomes)
 
 ### Backend (FastAPI)
-- **Dossier:** `backend-fastapi/`
+- **Dossier:** `annuaire-fastapi/`
 - **Port:** 8000 (API)
 - **Port DB:** 3307 (MariaDB, local mapping 3307→3306 interne)
-- **Docker:** `backend-fastapi/docker-compose.yml` (inclut MariaDB)
+- **Docker:** `annuaire-fastapi/docker-compose.yml` (inclut MariaDB)
 - **Modèles Pydantic** pour Contact
 - **Endpoints CRUD** + search
 - **Base de données:** MariaDB 11.2 (container: `annuaire-mariadb`)
@@ -106,7 +106,7 @@ annuaire-contacts/
 │   ├── README.md                ← Quick start
 │   └── .claude/rules/           ← 5 règles non-négociables
 │
-├── backend-fastapi/
+├── annuaire-fastapi/
 │   ├── docker-compose.yml       ← Service (MariaDB inclus)
 │   ├── Dockerfile
 │   ├── main.py                  ← Endpoints FastAPI

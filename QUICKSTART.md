@@ -6,7 +6,7 @@ Chaque service est autonome avec son propre `docker-compose.yml`.
 
 **Terminal 1: Backend**
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up --build
 ```
 

@@ -50,7 +50,7 @@ La structure du projet a évolué depuis la dernière documentation. Voici les c
 ```
 annuaire-contacts/
 ├── orchestrator/              ✅ Documentation + règles
-├── backend-fastapi/           ✅ Service FastAPI
+├── annuaire-fastapi/           ✅ Service FastAPI
 │   ├── docker-compose.yml     ← CHANGÉ (MariaDB inclus)
 │   ├── database.py            ← CHANGÉ (MySQL/MariaDB)
 │   ├── main.py
@@ -125,7 +125,7 @@ LOG_LEVEL=INFO
 
 ```bash
 # Terminal 1
-cd backend-fastapi && docker compose up
+cd annuaire-fastapi && docker compose up
 
 # Terminal 2
 cd mcp-fast-mcp && docker compose up
@@ -139,7 +139,7 @@ curl http://localhost:8001/health      # MCP
 
 ```bash
 # Terminal 1
-cd backend-fastapi && docker compose up
+cd annuaire-fastapi && docker compose up
 # → Démarre mariadb + backend
 
 # Terminal 2

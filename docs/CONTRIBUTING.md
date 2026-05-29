@@ -7,7 +7,7 @@
 - **5 Règles Non-Négociables:** Lire `.claude/rules/annuaire-contacts-rules.md` avant toute modification
 - **Orchestrator ≠ Logique Métier:** Seule l'orchestration et la documentation vont ici
 - **Clients Générés:** Jamais d'URLs hardcodées
-- **Git Commits:** Depuis les repos techniques (`backend-fastapi/`, `mcp-fast-mcp/`)
+- **Git Commits:** Depuis les repos techniques (`annuaire-fastapi/`, `mcp-fast-mcp/`)
 - **Docker Compose:** Source de vérité pour la configuration
 
 ---
@@ -21,7 +21,7 @@ git clone <repo> annuaire-contacts
 cd annuaire-contacts
 
 # Vérifier les 3 repos
-ls -la backend-fastapi/.git
+ls -la annuaire-fastapi/.git
 ls -la mcp-fast-mcp/.git
 ls -la orchestrator/.git
 ```
@@ -32,7 +32,7 @@ ls -la orchestrator/.git
 
 **Terminal 1: Backend**
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up --build
 ```
 
@@ -45,7 +45,7 @@ docker compose up --build
 **Accès:**
 - Backend API: http://localhost:8000/docs (Swagger)
 - MCP Health: http://localhost:8001/health
-- Base de données: `backend-fastapi/data/contacts.db`
+- Base de données: `annuaire-fastapi/data/contacts.db`
 
 → **Détails:** Voir `docs/SERVICES.md`
 
@@ -66,7 +66,7 @@ cd orchestrator
 #### 2. Implémenter Backend
 
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 
 # Créer une branche
 git checkout -b feature/new-endpoint
@@ -205,7 +205,7 @@ async def mcp_search(request: SearchRequest):
 
 **Structure:**
 ```bash
-backend-fastapi/
+annuaire-fastapi/
 ├── tests/
 │   ├── test_models.py
 │   ├── test_endpoints.py
@@ -243,7 +243,7 @@ def test_duplicate_email():
 
 **Lancer les tests:**
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 pytest -v
 ```
 
@@ -396,7 +396,7 @@ curl ...
 **Solution:**
 ```bash
 # Backend
-cd backend-fastapi
+cd annuaire-fastapi
 pip install -e .
 
 # MCP
@@ -413,7 +413,7 @@ docker compose down
 docker compose up
 
 # Relancer tests
-cd backend-fastapi
+cd annuaire-fastapi
 pytest -v
 ```
 

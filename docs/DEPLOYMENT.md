@@ -10,7 +10,7 @@ Services autonomes: chacun peut être déployé indépendamment.
 
 **Terminal 1: Backend**
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 cp .env.example .env  # Configurer si besoin
 docker compose up --build
 ```
@@ -26,7 +26,7 @@ docker compose up --build
 - Backend: http://localhost:8000
 - MCP: http://localhost:8001
 - Swagger UI: http://localhost:8000/docs
-- Database: `backend-fastapi/data/contacts.db`
+- Database: `annuaire-fastapi/data/contacts.db`
 
 → **Détails:** Voir `docs/SERVICES.md`
 
@@ -42,7 +42,7 @@ docker compose up --build
 
 ### Variables d'Environnement
 
-**Backend** (`backend-fastapi/.env`):
+**Backend** (`annuaire-fastapi/.env`):
 ```env
 DATABASE_URL=sqlite:///./data/contacts.db
 LOG_LEVEL=INFO
@@ -56,14 +56,14 @@ LOG_LEVEL=INFO
 
 ### Fichiers
 
-- `backend-fastapi/.env.example` — Template backend
+- `annuaire-fastapi/.env.example` — Template backend
 - `mcp-fast-mcp/.env.example` — Template MCP
 - **NE PAS committer** les fichiers `.env` (secrets)
 
 **Setup:**
 ```bash
 # Backend
-cd backend-fastapi
+cd annuaire-fastapi
 cp .env.example .env
 # Éditer .env si besoin
 

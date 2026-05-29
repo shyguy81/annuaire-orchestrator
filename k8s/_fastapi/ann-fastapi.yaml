@@ -23,7 +23,7 @@ spec:
       serviceAccountName: py-sa
       containers:
         - name: py
-          image: ghcr.io/shyguy81/backend-fastapi/backend-api:latest
+          image: ghcr.io/shyguy81/annuaire-fastapi/backend-api:latest
           envFrom:
             - configMapRef:
                 name: annuaire-config

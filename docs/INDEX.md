@@ -35,7 +35,7 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 ### Je veux démarrer les services
 
 1. **Lire:** `SERVICES.md` (5 min)
-2. **Terminal 1:** `cd backend-fastapi && docker compose up`
+2. **Terminal 1:** `cd annuaire-fastapi && docker compose up`
 3. **Terminal 2:** `cd mcp-fast-mcp && docker compose up`
 4. **Tester:** Exemples curl dans QUICKSTART.md
 
@@ -44,7 +44,7 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 ### Je veux ajouter un nouvel endpoint
 
 1. **Lire:** `CONTRIBUTING.md` → "Ajouter une Nouvelle Fonctionnalité"
-2. **Implémenter:** Code dans `backend-fastapi/` ou `mcp-fast-mcp/`
+2. **Implémenter:** Code dans `annuaire-fastapi/` ou `mcp-fast-mcp/`
 3. **Tester:** `docker compose up --build` depuis le dossier
 4. **Documenter:** Ajouter détails dans API.md ou MCP.md
 5. **Commit:** Depuis le repo technique
@@ -122,16 +122,16 @@ Bienvenue dans l'annuaire-contacts! Voici comment naviguer la documentation.
 - Database: `annuaire_contacts`
 
 ### Documentation Technique
-- **Backend:** `../backend-fastapi/` (code source)
+- **Backend:** `../annuaire-fastapi/` (code source)
 - **MCP:** `../mcp-fast-mcp/` (code source)
 - **Règles:** `../.claude/rules/annuaire-contacts-rules.md` (5 règles)
 
 ### Fichiers Config
-- `backend-fastapi/.env.example` — Template variables backend
+- `annuaire-fastapi/.env.example` — Template variables backend
 - `mcp-fast-mcp/.env.example` — Template variables MCP
-- `backend-fastapi/docker-compose.yml` — Service backend
+- `annuaire-fastapi/docker-compose.yml` — Service backend
 - `mcp-fast-mcp/docker-compose.yml` — Service MCP
-- `backend-fastapi/requirements.txt` — Dépendances backend
+- `annuaire-fastapi/requirements.txt` — Dépendances backend
 - `mcp-fast-mcp/requirements.txt` — Dépendances MCP
 
 ---

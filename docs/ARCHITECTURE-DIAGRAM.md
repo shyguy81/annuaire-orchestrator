@@ -27,7 +27,7 @@
 
 ### 🟦 Backend Stack
 
-Located in: `backend-fastapi/`
+Located in: `annuaire-fastapi/`
 
 #### FastAPI Backend
 - **Container:** `annuaire-backend`
@@ -249,7 +249,7 @@ annuaire-contacts/
 │       ├── ARCHITECTURE.svg        ← SVG (scalable)
 │       └── ARCHITECTURE-DIAGRAM.md ← This file
 │
-├── backend-fastapi/
+├── annuaire-fastapi/
 │   ├── docker-compose.yml
 │   ├── main.py
 │   ├── database.py

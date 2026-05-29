@@ -12,25 +12,33 @@ annuaire-contacts/
 │   ├── DIAGNOSTIC.md          → Changements récents
 │   └── .claude/rules/         → 5 règles non-négociables
 │
-├── backend-fastapi/           ← Service autonome (port 8000 API + 3307 DB)
-│   ├── docker-compose.yml     → Démarrage: cd backend-fastapi && docker compose up
+├── annuaire-fastapi/          ← Service backend (port 8000 API + MariaDB 3306)
+│   ├── docker-compose.yml     → Démarrage: cd annuaire-fastapi && docker compose up
 │   │                             (inclut MariaDB + healthcheck)
 │   ├── main.py, models.py, database.py
 │   ├── Dockerfile
-│   └── .git/                  → Repo autonome
+│   └── .git/                  → Repo autonome (remplace mcp-fast-mcp avec annuaire-mcp)
 │
-├── mcp-fast-mcp/              ← Service autonome (port 80/443 via Nginx)
-│   ├── docker-compose.yml     → Démarrage: cd mcp-fast-mcp && docker compose up
-│   │                             (inclut Nginx reverse proxy + TLS)
-│   ├── main.py, models.py
-│   ├── backend_client.py      → Client httpx vers backend
-│   ├── docker/                → CONFIG NGINX + CERTIFICATS TLS
-│   │   ├── certs/             → Certificats autosignés (mkcert)
-│   │   └── nginx/             → Config Nginx (nginx.conf + conf.d/)
+├── annuaire-cli/              ← CLI nouveau (interfaces annuaire-fastapi)
+│   ├── main.py, commands/
 │   ├── Dockerfile
 │   └── .git/                  → Repo autonome
 │
-└── data/                      ← Dossier données (volumes Docker)
+├── mcp-fast-mcp/              ← Service MCP actuel (port 80/443 via Nginx)
+│   ├── docker-compose.yml     → Démarrage: cd mcp-fast-mcp && docker compose up
+│   ├── main.py, models.py
+│   ├── backend_client.py      → Client httpx vers annuaire-fastapi
+│   ├── docker/                → CONFIG NGINX + CERTIFICATS TLS
+│   │   ├── certs/
+│   │   └── nginx/
+│   ├── Dockerfile
+│   └── .git/                  → Repo autonome
+│   ⚠️  Sera remplacé par annuaire-mcp
+│
+├── cli-llm/                   ← Espace de test annuaire-cli (Claude Code)
+│   └── .git/                  → Repo autonome
+│
+└── data/                      ← Volumes Docker (à clarifier)
 ```
 
 ## Rôle de l'orchestrateur
@@ -49,7 +57,7 @@ Voir [.claude/rules/annuaire-contacts-rules.md](./.claude/rules/annuaire-contact
 
 **TL;DR:**
 1. Orchestrator = orchestration + doc uniquement
-2. Ne JAMAIS modifier backend ou MCP depuis ici
+2. Ne JAMAIS modifier annuaire-fastapi, annuaire-cli, mcp-fast-mcp depuis ici
 3. Clients générés (pas d'URLs hardcodées)
 4. Commits depuis repos techniques
 5. Docker Compose = source de vérité

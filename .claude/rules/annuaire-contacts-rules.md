@@ -7,8 +7,10 @@ Architecture:
 ```
 annuaire-contacts/
 ├── orchestrator/          ← CE DOSSIER (orchestration + doc)
-├── backend-fastapi/       ← LIT SEUL depuis orchestrator
-└── mcp-fast-mcp/          ← LIT SEUL depuis orchestrator
+├── annuaire-fastapi/      ← Backend (logique métier)
+├── annuaire-cli/          ← CLI nouveau
+├── mcp-fast-mcp/          ← MCP actuel (remplacé par annuaire-mcp)
+└── cli-llm/               ← Espace de test CLI
 ```
 
 ---
@@ -25,7 +27,7 @@ L'orchestrateur découple les services et route les appels. Il ne contient pas d
 - ✅ Docker Compose, gestion des services
 - ✅ Coordination des flux (FastAPI → MCP)
 - ✅ Config centralisée
-- ❌ Logique métier (va dans backend-fastapi)
+- ❌ Logique métier (va dans annuaire-fastapi)
 - ❌ Implémentation MCP (va dans mcp-fast-mcp)
 
 **Conséquence:**
@@ -57,7 +59,7 @@ async def create_contact(name: str):
 ### Règle 2: **Ne JAMAIS modifier le code des repos liés**
 
 **Énoncé:**  
-`backend-fastapi/` et `mcp-fast-mcp/` ne se modifient **jamais** depuis ce dossier.
+`annuaire-fastapi/` et `mcp-fast-mcp/` ne se modifient **jamais** depuis ce dossier.
 
 **Pourquoi:**
 
@@ -75,22 +77,22 @@ async def create_contact(name: str):
 
 ```bash
 # ❌ MAUVAIS
-# cd ../backend-fastapi
+# cd ../annuaire-fastapi
 # → éditer src/main.py
 # → commit depuis orchestrator
 
 # ✅ BON
-# 1. cd ../backend-fastapi
+# 1. cd ../annuaire-fastapi
 # 2. Modifier le code ICI
 # 3. git commit & push DEPUIS ce repo
 # 4. Revenir à orchestrator pour documenter
 
 # Ou si révisions ponctuelles:
 # 1. Créer un prompt en local: .github/prompts/edit--inbox--fix-xxx.md
-# 2. cd ../backend-fastapi
+# 2. cd ../annuaire-fastapi
 # 3. @edit--inbox--fix-xxx
 # 4. Renommer en edit--done--
-# 5. Commit depuis backend-fastapi
+# 5. Commit depuis annuaire-fastapi
 ```
 
 ---
@@ -125,7 +127,7 @@ api = ContactsApi(base_url="http://backend:8000")
 response = await api.create_contact(name="Jean")
 
 # Avec génération OpenAPI:
-# 1. backend-fastapi expose son OpenAPI à /openapi.json
+# 1. annuaire-fastapi expose son OpenAPI à /openapi.json
 # 2. cd orchestrator && python scripts/generate-client.py
 # 3. Importer depuis client généré
 ```
@@ -135,7 +137,7 @@ response = await api.create_contact(name="Jean")
 ### Règle 4: **Commiter DEPUIS les repos techniques, pas depuis orchestrator**
 
 **Énoncé:**  
-Les `git commit` & `git push` se font **depuis `backend-fastapi/` ou `mcp-fast-mcp/`**, jamais depuis orchestrator.
+Les `git commit` & `git push` se font **depuis `annuaire-fastapi/` ou `mcp-fast-mcp/`**, jamais depuis orchestrator.
 
 **Pourquoi:**
 
@@ -154,12 +156,12 @@ Les `git commit` & `git push` se font **depuis `backend-fastapi/` ou `mcp-fast-m
 ```bash
 # ❌ MAUVAIS
 cd orchestrator
-# modifier ../backend-fastapi/src/main.py
+# modifier ../annuaire-fastapi/src/main.py
 git commit -m "fix: ..."
 git push
 
 # ✅ BON
-cd ../backend-fastapi
+cd ../annuaire-fastapi
 # modifier src/main.py
 git add src/main.py
 git commit -m "fix: ..."
@@ -196,7 +198,7 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ../backend-fastapi
+      context: ../annuaire-fastapi
       dockerfile: Dockerfile
     environment:
       - MCP_SERVER_URL=http://mcp:8001
@@ -243,7 +245,7 @@ Avant de commencer à travailler, vérifier:
 
 | Erreur                             | Symptôme                        | Solution                            |
 | ---------------------------------- | ------------------------------- | ----------------------------------- |
-| Logique métier dans orchestrator   | Code dupliqué, tests fragmentés | Déplacer vers backend-fastapi       |
+| Logique métier dans orchestrator   | Code dupliqué, tests fragmentés | Déplacer vers annuaire-fastapi       |
 | Modifier repos depuis orchestrator | git history perdue              | cd vers le repo + commit depuis là  |
 | URLs hardcodées                    | Runtime errors, drift API       | Utiliser client généré              |
 | Commit depuis orchestrator         | Git push fail, confusion        | cd backend ou mcp + commit/push     |
@@ -256,7 +258,7 @@ Avant de commencer à travailler, vérifier:
 - **[CLAUDE.md](../../CLAUDE.md)** — Contexte global du projet
 - **[docs/RULES.md](../../docs/RULES.md)** — Rules du projet (copie locale)
 - **[docker-compose.yml](../../docker-compose.yml)** — Orchestration des services
-- **../../backend-fastapi** — Backend FastAPI (logique métier)
+- **../../annuaire-fastapi** — Backend FastAPI (logique métier)
 - **../../mcp-fast-mcp** — Serveur MCP (protocole IA)
 
 ---

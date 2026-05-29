@@ -8,7 +8,7 @@ Un diagnostic complet de l'architecture a été effectué et la documentation de
 
 ## 📋 Dossiers Identifiés & Ajustements
 
-### Backend (backend-fastapi/)
+### Backend (annuaire-fastapi/)
 
 | Item | Change | Impact |
 |------|--------|--------|
@@ -80,7 +80,7 @@ Backend (8000)                  MCP (80/443)
 
 ```bash
 # Terminal 1: Backend + MariaDB
-cd backend-fastapi && docker compose up --build
+cd annuaire-fastapi && docker compose up --build
 
 # Terminal 2: MCP + Nginx (une fois backend prêt)
 cd mcp-fast-mcp && docker compose up --build
@@ -136,7 +136,7 @@ cd mcp-fast-mcp && docker compose up --build
 
 ```bash
 # 1. Backend démarrage
-cd backend-fastapi && docker compose up --build
+cd annuaire-fastapi && docker compose up --build
 # Vérifier: "Uvicorn running" + "ready for connections"
 
 # 2. MCP démarrage

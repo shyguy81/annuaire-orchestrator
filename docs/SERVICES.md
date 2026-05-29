@@ -6,12 +6,12 @@ Chaque service est autonome avec son propre `docker-compose.yml`.
 
 ## Backend FastAPI
 
-**Localisation:** `backend-fastapi/docker-compose.yml`
+**Localisation:** `annuaire-fastapi/docker-compose.yml`
 
 ### Démarrer seul
 
 ```bash
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up --build
 ```
 
@@ -129,7 +129,7 @@ curl http://localhost/health
 
 ```bash
 # Terminal 1: Backend (inclut MariaDB)
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up --build
 # Attendre: "Uvicorn running on http://0.0.0.0:8000"
 
@@ -164,7 +164,7 @@ curl -k https://localhost/health
 #!/bin/bash
 
 # Démarrer backend en background
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up -d --build
 BACKEND_PID=$!
 echo "Backend démarré (PID: $BACKEND_PID)"
@@ -192,7 +192,7 @@ chmod +x start-all.sh
 **Arrêter:**
 ```bash
 # Ctrl+C ou:
-cd backend-fastapi && docker compose down
+cd annuaire-fastapi && docker compose down
 cd ../mcp-fast-mcp && docker compose down
 ```
 
@@ -216,7 +216,7 @@ cd ../mcp-fast-mcp && docker compose down
 **Lancer ensemble:**
 ```bash
 # Terminal 1
-cd backend-fastapi && docker compose up --build
+cd annuaire-fastapi && docker compose up --build
 
 # Terminal 2 (dans un autre terminal, après que backend soit prêt)
 cd mcp-fast-mcp && docker compose up --build
@@ -244,7 +244,7 @@ cd mcp-fast-mcp && docker compose up --build
 
 ```bash
 # Backend
-cd backend-fastapi && docker compose logs -f
+cd annuaire-fastapi && docker compose logs -f
 
 # MCP
 cd mcp-fast-mcp && docker compose logs -f
@@ -265,7 +265,7 @@ Si erreur `Connection refused` → Backend n'est pas démarré.
 
 ```bash
 # Terminal 1: Backend (+ MariaDB)
-cd backend-fastapi
+cd annuaire-fastapi
 docker compose up --build
 # Attendre: 
 #   - "mariadb_1 | ready for connections"
@@ -295,7 +295,7 @@ curl -X POST http://localhost/search \
 docker compose down
 
 # Ou depuis chaque dossier
-cd backend-fastapi && docker compose down
+cd annuaire-fastapi && docker compose down
 cd ../mcp-fast-mcp && docker compose down
 ```
 

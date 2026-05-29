@@ -14,7 +14,7 @@ Système de gestion contacts avec API FastAPI + serveur MCP pour intégration IA
 
 ```bash
 # Terminal 1: Backend + MariaDB
-cd backend-fastapi && docker compose up --build
+cd annuaire-fastapi && docker compose up --build
 
 # Terminal 2: MCP + Nginx (une fois backend prêt)
 cd mcp-fast-mcp && docker compose up --build
@@ -76,7 +76,7 @@ annuaire-contacts/
 │   ├── docs/           → Documentation complète
 │   ├── DIAGNOSTIC.md   → Changements récents
 │   └── CHANGELOG.md    → Historique
-├── backend-fastapi/     ← API REST (CRUD contacts)
+├── annuaire-fastapi/     ← API REST (CRUD contacts)
 │                          + MariaDB database
 ├── mcp-fast-mcp/        ← Serveur MCP (recherche IA)
 │                          + Nginx reverse proxy
@@ -151,7 +151,7 @@ MariaDB Database            MCP Server (8000 internal)
 Copier `.env.example` → `.env` et adapter (optionnel, valeurs par défaut existantes):
 
 ```bash
-cp backend-fastapi/.env.example backend-fastapi/.env
+cp annuaire-fastapi/.env.example annuaire-fastapi/.env
 cp mcp-fast-mcp/.env.example mcp-fast-mcp/.env
 ```
 
@@ -181,7 +181,7 @@ docker compose up --build
 docker compose logs -f
 
 # Tests (backend)
-cd backend-fastapi && pytest -v
+cd annuaire-fastapi && pytest -v
 
 # Arrêter
 docker compose down
