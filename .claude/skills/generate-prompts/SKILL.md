@@ -100,28 +100,35 @@ Chaque repo technique (`annuaire-fastapi/`, `mcp-fast-mcp/`, `annuaire-cli/`) do
 
 ### Template de prompt complet
 
-```markdown
+````markdown
 # [Type]: [Titre court]
 
 ## Contexte (optionnel)
+
 Explications utiles...
 
 ## Tâche
+
 - Étape 1
 - Étape 2
 - Étape 3
 
 ## Validation
+
 - Critère de succès 1
 - Critère de succès 2
 
 ## Après validation
+
 Renommer le fichier:
+
 ```bash
 mv .github/prompts/[type]--inbox--[nom].md \
    .github/prompts/[type]--done--[nom].md
 ```
-```
+````
+
+````
 
 ### Exemple 1: Correction simple
 
@@ -134,8 +141,9 @@ Corriger "teh" → "the" dans [docs/API.md](docs/API.md)
 ```bash
 mv .github/prompts/edit--inbox--typo-doc.md \
    .github/prompts/edit--done--typo-doc.md
-```
-```
+````
+
+````
 
 ### Exemple 2: Ajout de fonction
 
@@ -157,8 +165,9 @@ mv .github/prompts/edit--inbox--typo-doc.md \
 ```bash
 mv .github/prompts/feature--inbox--export-json.md \
    .github/prompts/feature--done--export-json.md
-```
-```
+````
+
+````
 
 ### Exemple 3: Refactorisation
 
@@ -184,24 +193,27 @@ mv .github/prompts/feature--inbox--export-json.md \
 ```bash
 mv .github/prompts/refactor--inbox--decouple-validation.md \
    .github/prompts/refactor--done--decouple-validation.md
-```
+````
+
 ```
 
 ## 🔄 Cycle de vie d'un prompt
 
 ```
+
 inbox (À faire)
-    ↓
+↓
 Ouvert dans Copilot
-    ↓
+↓
 Modifications appliquées
-    ↓
+↓
 Tests passent
-    ↓
+↓
 done (Archivé)
-    ↓
+↓
 git commit depuis le repo technique
-```
+
+````
 
 ## ⚙️ Intégration avec orchestrator
 
@@ -234,7 +246,7 @@ git commit depuis le repo technique
 - [ ] `.github/prompts/feature--inbox--jwt-auth.md` dans `annuaire-fastapi`
 - [ ] `.github/prompts/feature--inbox--jwt-client.md` dans `mcp-fast-mcp`
 - [ ] `.github/prompts/feature--inbox--jwt-cli.md` dans `annuaire-cli`
-```
+````
 
 ## 🎓 Bonnes pratiques
 
