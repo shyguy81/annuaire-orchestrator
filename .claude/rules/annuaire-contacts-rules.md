@@ -59,7 +59,9 @@ async def create_contact(name: str):
 ### Règle 2: **Ne JAMAIS modifier le code des repos liés**
 
 **Énoncé:**  
-`annuaire-fastapi/` et `mcp-fast-mcp/` ne se modifient **jamais** depuis ce dossier.
+`annuaire-fastapi/`, `annuaire-cli/`, `mcp-fast-mcp/` et `cli-llm/` ne se modifient **jamais** depuis ce dossier.
+
+**Détail:** Voir **[protected-repos.md](./protected-repos.md)** — liste exhaustive des repos protégés, portée exacte, cas particulier des fichiers générés (Règle 3).
 
 **Pourquoi:**
 
@@ -82,7 +84,7 @@ async def create_contact(name: str):
 # → commit depuis orchestrator
 
 # ✅ BON
-# 1. cd ../annuaire-fastapi
+# 1. cd ../annuaire-fastapi   (ou annuaire-cli, mcp-fast-mcp, cli-llm)
 # 2. Modifier le code ICI
 # 3. git commit & push DEPUIS ce repo
 # 4. Revenir à orchestrator pour documenter
@@ -137,7 +139,7 @@ response = await api.create_contact(name="Jean")
 ### Règle 4: **Commiter DEPUIS les repos techniques, pas depuis orchestrator**
 
 **Énoncé:**  
-Les `git commit` & `git push` se font **depuis `annuaire-fastapi/` ou `mcp-fast-mcp/`**, jamais depuis orchestrator.
+Les `git commit` & `git push` se font **depuis le repo concerné** (`annuaire-fastapi/`, `annuaire-cli/`, `mcp-fast-mcp/` ou `cli-llm/`), jamais depuis orchestrator.
 
 **Pourquoi:**
 
@@ -234,9 +236,9 @@ services:
 Avant de commencer à travailler, vérifier:
 
 - [ ] **Règle 1:** Je n'ajoute pas de logique métier dans orchestrator
-- [ ] **Règle 2:** Je n'édite pas les repos liés depuis ce dossier
+- [ ] **Règle 2:** Je n'édite pas les repos liés depuis ce dossier ([liste des repos protégés](./protected-repos.md))
 - [ ] **Règle 3:** J'utilise les clients générés (pas d'URLs hardcodées)
-- [ ] **Règle 4:** Je fais `git commit` depuis le bon repo (backend ou mcp)
+- [ ] **Règle 4:** Je fais `git commit` depuis le bon repo (voir [protected-repos.md](./protected-repos.md))
 - [ ] **Règle 5:** Les configs centrales sont dans `docker-compose.yml`
 
 ---
@@ -246,9 +248,9 @@ Avant de commencer à travailler, vérifier:
 | Erreur                             | Symptôme                        | Solution                            |
 | ---------------------------------- | ------------------------------- | ----------------------------------- |
 | Logique métier dans orchestrator   | Code dupliqué, tests fragmentés | Déplacer vers annuaire-fastapi       |
-| Modifier repos depuis orchestrator | git history perdue              | cd vers le repo + commit depuis là  |
+| Modifier repos liés depuis orchestrator | git history perdue          | cd vers le repo concerné + commit depuis là (voir [protected-repos.md](./protected-repos.md)) |
 | URLs hardcodées                    | Runtime errors, drift API       | Utiliser client généré              |
-| Commit depuis orchestrator         | Git push fail, confusion        | cd backend ou mcp + commit/push     |
+| Commit depuis orchestrator         | Git push fail, confusion        | cd vers le repo concerné + commit/push |
 | Config fragmentée                  | Services ne démarrent pas       | Centraliser dans docker-compose.yml |
 
 ---
@@ -258,10 +260,13 @@ Avant de commencer à travailler, vérifier:
 - **[CLAUDE.md](../../CLAUDE.md)** — Contexte global du projet
 - **[docs/RULES.md](../../docs/RULES.md)** — Rules du projet (copie locale)
 - **[docker-compose.yml](../../docker-compose.yml)** — Orchestration des services
+- **[protected-repos.md](./protected-repos.md)** — Liste des repos protégés (Règle 2)
 - **../../annuaire-fastapi** — Backend FastAPI (logique métier)
+- **../../annuaire-cli** — CLI Rust
 - **../../mcp-fast-mcp** — Serveur MCP (protocole IA)
+- **../../cli-llm** — Espace de test annuaire-cli
 
 ---
 
-**Dernière mise à jour:** 2026-04-06  
+**Dernière mise à jour:** 2026-07-02  
 **Adapté pour:** annuaire-contacts/orchestrator

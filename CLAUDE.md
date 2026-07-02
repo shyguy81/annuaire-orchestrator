@@ -12,9 +12,9 @@ annuaire-contacts/
 │   ├── DIAGNOSTIC.md          → Changements récents
 │   └── .claude/rules/         → 5 règles non-négociables
 │
-├── annuaire-fastapi/          ← Service backend (port 8000 API + MariaDB 3306)
+├── annuaire-fastapi/          ← Service backend (port 8000 API + PostgreSQL 5432)
 │   ├── docker-compose.yml     → Démarrage: cd annuaire-fastapi && docker compose up
-│   │                             (inclut MariaDB + healthcheck)
+│   │                             (inclut PostgreSQL + healthcheck)
 │   ├── main.py, models.py, database.py
 │   ├── Dockerfile
 │   └── .git/                  → Repo autonome (remplace mcp-fast-mcp avec annuaire-mcp)
@@ -67,7 +67,7 @@ Voir [.claude/rules/annuaire-contacts-rules.md](./.claude/rules/annuaire-contact
 Aucun code/build/lint/test dans ce repo (doc uniquement). Démarrage des services se fait depuis leurs repos respectifs :
 
 ```bash
-# Backend (API + MariaDB)
+# Backend (API + PostgreSQL)
 cd ../annuaire-fastapi && docker compose up --build
 # → http://localhost:8000/docs (Swagger), http://localhost:8000/health
 
@@ -80,7 +80,7 @@ Tests/lint du code métier : voir `annuaire-fastapi` (`pytest -v`) et `mcp-fast-
 
 ## Drift doc vs réalité
 
-`DIAGNOSTIC.md` liste les écarts connus entre docs et code réel (ex : backend documenté SQLite mais réellement MariaDB, MCP documenté port 8001 mais réellement derrière Nginx 80/443). Vérifier ce fichier avant de faire confiance à un détail de config dans `docs/`.
+`DIAGNOSTIC.md` liste les écarts connus entre docs et code réel (ex : backend documenté SQLite mais réellement PostgreSQL, MCP documenté port 8001 mais réellement derrière Nginx 80/443). Vérifier ce fichier avant de faire confiance à un détail de config dans `docs/`.
 
 ## Autres fichiers utiles
 

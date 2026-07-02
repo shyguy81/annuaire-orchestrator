@@ -1,4 +1,4 @@
-# Diagnostic — Changements d'Architecture (2026-04-07)
+# Diagnostic — Changements d'Architecture (2026-07-02)
 
 ## Résumé des Ajustements
 
@@ -12,16 +12,21 @@ La structure du projet a évolué depuis la dernière documentation. Voici les c
 
 | Aspect | Documentation | Réalité | Statut |
 |--------|---|---|---|
-| **Base de données** | SQLite (`./data/contacts.db`) | MariaDB (port 3307→3306 interne) | ❌ **CHANGÉ** |
-| **Variables env** | `DATABASE_URL=sqlite:///...` | `DATABASE_URL=mysql+pymysql://...` | ❌ **CHANGÉ** |
+| **Base de données** | SQLite (`./data/contacts.db`) | PostgreSQL 15 (port 5432) | ❌ **CHANGÉ** |
+| **Variables env** | `DATABASE_URL=sqlite:///...` | `DATABASE_URL=postgresql+psycopg2://...` | ❌ **CHANGÉ** |
 | **Port API** | 8000 | 8000 | ✅ Correct |
 | **healthcheck** | N/A | `/health` endpoint | ✅ Nouveau |
-| **Container DB** | N/A | `annuaire-mariadb` | ✅ Nouveau |
+| **Container DB** | N/A | `annuaire-postgres` | ✅ Nouveau |
+| **main.py** | Monolithique | Modularisé (routes séparées) | ❌ **CHANGÉ** |
+| **Swagger** | Tags absents | Tags Swagger UI par route | ✅ Nouveau |
+| **Tests** | `tests/` | `.github/tests/` | ❌ **CHANGÉ** |
 
-**Docker-compose:** Le `docker-compose.yml` du backend inclut maintenant MariaDB avec:
-- Healthcheck
-- Volume `mariadb_data` pour persistence
-- Dépendance: backend attend mariadb healthy
+**Docker-compose:** Le `docker-compose.yml` du backend inclut maintenant PostgreSQL avec:
+- Healthcheck (`pg_isready`)
+- Volume `postgres_data` pour persistence
+- Dépendance: backend attend postgres healthy
+
+**Note:** Projet a migré MariaDB → PostgreSQL (précédemment SQLite → MariaDB). Voir MASTER-BACKLOG.md pour l'historique de cette migration.
 
 ---
 
@@ -51,10 +56,11 @@ La structure du projet a évolué depuis la dernière documentation. Voici les c
 annuaire-contacts/
 ├── orchestrator/              ✅ Documentation + règles
 ├── annuaire-fastapi/           ✅ Service FastAPI
-│   ├── docker-compose.yml     ← CHANGÉ (MariaDB inclus)
-│   ├── database.py            ← CHANGÉ (MySQL/MariaDB)
-│   ├── main.py
+│   ├── docker-compose.yml     ← CHANGÉ (PostgreSQL inclus)
+│   ├── database.py            ← CHANGÉ (PostgreSQL/psycopg2)
+│   ├── main.py                ← CHANGÉ (modularisé, routes en fichiers séparés)
 │   ├── models.py
+│   ├── .github/tests/         ← CHANGÉ (déplacé depuis tests/)
 │   └── Dockerfile
 │
 ├── mcp-fast-mcp/              ✅ Service MCP
@@ -81,17 +87,19 @@ annuaire-contacts/
 ### Backend FastAPI
 
 **Fichiers modifiés:**
-- `docker-compose.yml` — Ajout service MariaDB
-- `database.py` — Migration SQLite → MariaDB/MySQL
-- `.env.example` — Nouvelles variables (DB credentials)
+- `docker-compose.yml` — Service PostgreSQL (remplace MariaDB)
+- `database.py` — `postgresql+psycopg2://` (SQLAlchemy)
+- `requirements.txt` — `psycopg2-binary` (plus de `pymysql`)
+- `main.py` — Modularisé en routes séparées
+- Tests déplacés vers `.github/tests/`
 
 **Ports:**
-- ✗ Portage: `3307:3306` (mapping local 3307 → container 3306)
+- DB: `5432:5432` (PostgreSQL, mapping direct)
 - API: `8000:8000` (identique)
 
 **Variables d'environnement critiques:**
 ```env
-DATABASE_URL=mysql+pymysql://annuaire_user:annuaire_password@mariadb:3306/annuaire_contacts
+DATABASE_URL=postgresql+psycopg2://annuaire_user:annuaire_password@postgres:5432/annuaire_contacts
 LOG_LEVEL=INFO
 ```
 
@@ -135,12 +143,12 @@ curl http://localhost:8000/health      # Backend
 curl http://localhost:8001/health      # MCP
 ```
 
-### Après (Nginx + MariaDB)
+### Après (Nginx + PostgreSQL)
 
 ```bash
 # Terminal 1
 cd annuaire-fastapi && docker compose up
-# → Démarre mariadb + backend
+# → Démarre postgres + backend
 
 # Terminal 2
 cd mcp-fast-mcp && docker compose up
@@ -156,12 +164,12 @@ curl https://localhost/health          # MCP via Nginx TLS (port 443)
 
 ## 📋 Checklist Migration Documentation
 
-- [ ] **SERVICES.md** — Mettre à jour ports et config MCP/Nginx
-- [ ] **ARCHITECTURE.md** — Mettre à jour schéma (MariaDB, Nginx)
-- [ ] **API.md** — Vérifier endpoints (inchangés)
+- [ ] **SERVICES.md** — Mettre à jour ports et config MCP/Nginx/PostgreSQL
+- [ ] **ARCHITECTURE.md** — Mettre à jour schéma (PostgreSQL, Nginx)
+- [ ] **API.md** — Vérifier endpoints (tags Swagger ajoutés, endpoints RAP-1.4/1.5)
 - [ ] **MCP.md** — Mettre à jour ports d'accès
 - [ ] **README.md** — Mettre à jour quick start
-- [ ] **CLAUDE.md** — Mettre à jour diagramme architecture
+- [x] **CLAUDE.md** — Mis à jour (PostgreSQL au lieu de MariaDB)
 - [ ] **QUICKSTART.md** — Mettre à jour exemples curl
 
 ---
@@ -173,7 +181,7 @@ curl https://localhost/health          # MCP via Nginx TLS (port 443)
 1. **data/ folder** — Quel est son usage exact?
    - Volume partagé entre services?
    - Données persistantes?
-   
+
 2. **scripts/ folder** — Pourquoi vide dans mcp-fast-mcp?
    - Prévu pour des scripts d'installation?
    - À documenter ou supprimer?
@@ -191,5 +199,6 @@ curl https://localhost/health          # MCP via Nginx TLS (port 443)
 
 ---
 
-**Génération:** 2026-04-07  
+**Génération:** 2026-04-07
+**Mise à jour:** 2026-07-02 (migration PostgreSQL confirmée, modularisation main.py, réorg tests)
 **Scope:** annuaire-contacts/orchestrator
