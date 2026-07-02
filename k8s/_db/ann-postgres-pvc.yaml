@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: annuaire
-  name: annuaire-mariadb-pvc
+  name: annuaire-postgres-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -17,7 +17,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   namespace: annuaire
-  name: annuaire-mariadb-pv
+  name: annuaire-postgres-pv
 spec:
   capacity:
     storage: 10Gi
@@ -27,7 +27,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain # Conserve les données après suppression du PVC
   storageClassName: annuaire-sc # Optionnel, pour une classe de stockage spécifique
   nfs:
-    path: /volume1/kubernetes/mariadb-annuaire/
+    path: /volume1/kubernetes/postgres-annuaire/
     server: 192.168.100.251 # Adresse IP du NAS
   mountOptions:
     - nfsvers=4.1

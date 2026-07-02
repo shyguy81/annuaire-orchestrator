@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-pod
+  namespace: annuaire
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-pod
+  template:
+    metadata:
+      labels:
+        app: postgres-pod
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: postgres:15
+          command:
+            [
+              "sh",
+              "-c",
+              "chown -R postgres:postgres /var/lib/postgresql/data",
+            ]
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres-container
+          image: postgres:15
+          env:
+            - name: TZ
+              value: Europe/Paris
+            - name: POSTGRES_DB
+              value: "annuaire_contacts"
+            - name: POSTGRES_USER
+              value: "annuaire_user"
+            - name: POSTGRES_PASSWORD
+              value: "annuaire_password"
+          ports:
+            - containerPort: 5432
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "annuaire_user", "-d", "annuaire_contacts"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "annuaire_user", "-d", "annuaire_contacts"]
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 3
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: annuaire-postgres-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: annuaire
+spec:
+  selector:
+    app: postgres-pod
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP

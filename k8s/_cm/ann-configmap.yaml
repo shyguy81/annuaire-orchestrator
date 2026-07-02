@@ -5,5 +5,5 @@ metadata:
   namespace: annuaire
 data:
   TZ: Europe/Paris
-  DATABASE_URL: mysql+pymysql://annuaire_usr:annuaire_pass@mariadb-svc:3306/annuaire_db
+  DATABASE_URL: postgresql+psycopg2://annuaire_user:annuaire_password@postgres-svc:5432/annuaire_contacts
   LOG_LEVEL: INFO

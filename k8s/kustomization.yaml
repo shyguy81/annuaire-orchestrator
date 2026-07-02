@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - _cm/ann-configmap.yaml
+  - _db/ann-postgres-pvc.yaml
+  - _db/postgres.yaml
+  - _fastapi/ann-py-sourcecode-pvc.yaml
+  - _fastapi/ann-fastapi.yaml
+  - _ingress/ann-sc-tls.yaml
+  - _ingress/ann-ingress-local-https.yaml
