@@ -255,6 +255,12 @@ Avant de commencer à travailler, vérifier:
 
 ---
 
+## 🔐 Credentials
+
+**KUBECONFIG:** chemin défini en variable d'env dans `.claude/settings.local.json` (`env.KUBECONFIG`), pas commité (fichier local, gitignored). Permet `kubectl`/`kustomize` d'agir sur le cluster réel depuis ce repo sans exposer le kubeconfig dans le code versionné.
+
+---
+
 ## 🔗 Liens
 
 - **[CLAUDE.md](../../CLAUDE.md)** — Contexte global du projet
