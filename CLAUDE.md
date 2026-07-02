@@ -62,6 +62,31 @@ Voir [.claude/rules/annuaire-contacts-rules.md](./.claude/rules/annuaire-contact
 4. Commits depuis repos techniques
 5. Docker Compose = source de vérité
 
+## Commandes
+
+Aucun code/build/lint/test dans ce repo (doc uniquement). Démarrage des services se fait depuis leurs repos respectifs :
+
+```bash
+# Backend (API + MariaDB)
+cd ../annuaire-fastapi && docker compose up --build
+# → http://localhost:8000/docs (Swagger), http://localhost:8000/health
+
+# MCP (+ Nginx, reverse proxy 80/443) — après que le backend soit prêt
+cd ../mcp-fast-mcp && docker compose up --build
+# → http://localhost/health, https://localhost/health (certif auto-signé)
+```
+
+Tests/lint du code métier : voir `annuaire-fastapi` (`pytest -v`) et `mcp-fast-mcp` — jamais lancés depuis ici.
+
+## Drift doc vs réalité
+
+`DIAGNOSTIC.md` liste les écarts connus entre docs et code réel (ex : backend documenté SQLite mais réellement MariaDB, MCP documenté port 8001 mais réellement derrière Nginx 80/443). Vérifier ce fichier avant de faire confiance à un détail de config dans `docs/`.
+
+## Autres fichiers utiles
+
+- **[MASTER-BACKLOG.md](./MASTER-BACKLOG.md)** — Source de vérité unique des tâches (méthodologie ICE, priorités P0/P1/P2)
+- **[k8s/](./k8s/)** — Manifests Kubernetes (déploiement au-delà de Docker Compose)
+
 ## 📚 Documentation
 
 - **[docs/SERVICES.md](./docs/SERVICES.md)** — Démarrage autonome des services
