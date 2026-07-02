@@ -23,6 +23,36 @@
 
 ## Phase 1: RAP System Core (MVP) — P0
 
+### RAP-1.0: Database Migration (MariaDB → PostgreSQL)
+
+| Métrique | Valeur |
+|----------|--------|
+| Impact | 10 |
+| Confidence | 95% |
+| Effort | 3 |
+| **ICE Score** | **31.67** |
+| Priorité | 🔴 P0 |
+| Status | 🔴 Ready |
+| Dépendances | Aucune |
+| Bloc | RAP-1.1, RAP-1.2, RAP-1.3, RAP-1.4 |
+
+**Description:**
+- Remplacer service MariaDB par PostgreSQL 15+ dans `docker-compose.yml`
+- Mettre à jour connection string (dialecte SQLAlchemy: `postgresql+psycopg2://`)
+- Configurer PostgreSQL env vars (POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD)
+- Ajouter healthcheck PostgreSQL dans compose
+- Vérifier volumes persistants PostgreSQL
+- Supprimer toutes références MariaDB du projet (docs, configs, code)
+- Mettre à jour annuaire-fastapi avec driver PostgreSQL (psycopg2)
+
+**Livrable:**
+- `docker-compose.yml` (service PostgreSQL)
+- `.env` ou variables d'environnement
+- Tests: connexion PostgreSQL OK, healthcheck validé
+- Vérifier annuaire-fastapi démarre sans erreur
+
+---
+
 ### RAP-1.1: Database Models + ORM (RelationshipProfile, Interaction, RelationshipAction)
 
 | Métrique | Valeur |
@@ -32,8 +62,8 @@
 | Effort | 3 |
 | **ICE Score** | **33.3** |
 | Priorité | 🔴 P0 |
-| Status | 🔴 Ready |
-| Dépendances | Aucune |
+| Status | 🟡 Blocked |
+| Dépendances | RAP-1.0 |
 | Bloc | RAP-1.2, RAP-1.3, RAP-1.4 |
 
 **Description:**
@@ -41,11 +71,11 @@
 - Ajouter Pydantic schemas (Create, Update, Response pour chaque)
 - Définir Enums: relationship_type, proximity_level, business_potential, interaction_type, action_type, action_status, priority
 - Configurer cascades `ondelete="CASCADE"` sur toutes ForeignKeys
-- Tester migration schema (MariaDB)
+- Tester migration schema avec PostgreSQL
 
 **Livrable:**
 - `models.py` (extend ~200 lignes)
-- Tests: CREATE table, FK constraints, ENUM values
+- Tests: CREATE table, FK constraints, ENUM values (PostgreSQL compatible)
 
 ---
 
@@ -203,7 +233,7 @@
 
 **Livrable:**
 - `test_rap.py` (pytest fixtures + ~50 test cases)
-- conftest.py (DB fixtures)
+- conftest.py (DB fixtures PostgreSQL)
 
 ---
 
@@ -409,13 +439,14 @@
 
 | Task | ICE | Effort | Status |
 |------|-----|--------|--------|
-| RAP-1.1 Models | 33.3 | 3j | 🔴 Ready |
+| RAP-1.0 PostgreSQL Migration | 31.67 | 3j | 🔴 Ready |
+| RAP-1.1 Models | 33.3 | 3j | 🟡 Blocked (→1.0) |
 | RAP-1.2 Profile API | 45.0 | 2j | 🟡 Blocked (→1.1) |
 | RAP-1.3 Interactions API | 40.0 | 2j | 🟡 Blocked (→1.1) |
 | RAP-1.4 Actions API | 33.3 | 3j | 🟡 Blocked (→1.1) |
 | RAP-1.5 Dashboard | 42.75 | 2j | 🟡 Blocked (→1.2-4) |
 
-**Σ Effort:** 12 jours | **Σ ICE:** 194.35 | **Timeline:** 2-3 semaines
+**Σ Effort:** 15 jours | **Σ ICE:** 226.02 | **Timeline:** 3-4 semaines
 
 ---
 
@@ -450,42 +481,47 @@
 
 ```
 Phase 1 MVP (P0):
-  1. RAP-1.1 Models ✓ (débloque tout)
+  1. RAP-1.0 PostgreSQL Migration ✓ (débloque tout)
      ↓
-  2. RAP-1.2 Profile API
+  2. RAP-1.1 Models ✓ (débloque endpoints)
+     ↓
+  3. RAP-1.2 Profile API
      RAP-1.3 Interactions API (parallèle)
      RAP-1.4 Actions API
      ↓
-  3. RAP-1.5 Dashboard (agrège les 3)
+  4. RAP-1.5 Dashboard (agrège les 3)
      ↓
-  4. RAP-1.6 Tests (validation)
-  5. RAP-1.7 Docs (auto-gen)
+  5. RAP-1.6 Tests (validation)
+  6. RAP-1.7 Docs (auto-gen)
 
 Phase 2 (P1 + P2):
-  6. MAINT-3, MAINT-4 (ops/security)
-  7. ENH-2.1, 2.2, 2.3 (features)
-  8. MAINT-1, 2 (cleanup)
+  7. MAINT-3, MAINT-4 (ops/security)
+  8. ENH-2.1, 2.2, 2.3 (features)
+  9. MAINT-1, 2 (cleanup)
 ```
 
 ---
 
 ## Checklist Livraison MVP (P0)
 
-- [ ] Task RAP-1.1 terminée (models + enums + migrations)
+- [ ] Task RAP-1.0 terminée (PostgreSQL running, no MariaDB references)
+- [ ] Task RAP-1.1 terminée (models + enums + migrations PostgreSQL)
 - [ ] Tasks RAP-1.2-1.4 terminées (11 endpoints)
 - [ ] Task RAP-1.5 terminée (dashboard aggregations)
 - [ ] Task RAP-1.6 terminée (tests passent)
 - [ ] Task RAP-1.7 terminée (Swagger OK)
 - [ ] Cascade DELETE fonctionne (delete contact → clean all children)
 - [ ] Tous les endpoints retournent les codes HTTP attendus
-- [ ] MariaDB schema match ORM models
+- [ ] PostgreSQL schema match ORM models
 - [ ] Docker `compose up` démarre sans erreur
 - [ ] Endpoints accessibles sur ports attendus
+- [ ] Zéro références MariaDB dans le code
 
 ---
 
 ## Historique
 
+- **2026-05-29:** Ajout RAP-1.0 PostgreSQL Migration — remplacement total MariaDB → PostgreSQL
 - **2026-05-29:** Création MASTER-BACKLOG.md (consolidation RAP-BACKLOG.md + CHANGELOG TODO + MAINT + ENH)
 - **2026-05-29:** RAP-DIAGRAMS.md (diagrammes architecture)
 - **2026-05-29:** RAP-BACKLOG.md → déprécié (migrer vers MASTER-BACKLOG.md)
